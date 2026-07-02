@@ -6,6 +6,9 @@ Hu; submitted to *Natural Hazards and Earth System Sciences*).
 
 Manuscript (LaTeX) repository: <https://github.com/Chunyu-Hugh/NHESS-marine-seismic-hazard-chains>
 
+**Interactive network viewer (Figs 1 & 2):** <http://chunyuhu.com/NHESS-marine-seismic-hazard-chains-code-data/>
+— click any node to trace its couplings; Chinese / English toggle. Source in [`docs/`](docs/).
+
 ## Contents
 
 | Folder | What it holds |
@@ -13,6 +16,7 @@ Manuscript (LaTeX) repository: <https://github.com/Chunyu-Hugh/NHESS-marine-seis
 | `data/` | The documented cascade tables that define the hazard networks — marine (`data/marine/`) and mainland China (`data/mainland_china/`). See `data/README.md`. |
 | `code/` | R scripts that build the networks, compute all reported metrics/figures, and run the robustness analysis. See `code/README.md`. |
 | `code/results/` | Example outputs of the robustness script (summary + Fig. 3). |
+| `docs/` | Interactive web viewer of the networks (served via GitHub Pages). |
 
 ## Reproduce
 
