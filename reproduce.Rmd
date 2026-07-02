@@ -1,0 +1,340 @@
+---
+title: "Reproducing the marine seismic hazard-chain results"
+subtitle: "Quantitative Modelling of Marine Seismic Hazard Chains (NHESS) — one document that regenerates every table and figure"
+author: "Shi, Hu, Zhang"
+date: "`r format(Sys.Date())`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    code_folding: show
+    df_print: kable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.align = "center", dpi = 150)
+```
+
+# Overview
+
+This single document reproduces **every number and figure** reported in the paper
+from the raw cascade tables in `data/`. Knit it (RStudio → *Knit*, or
+`rmarkdown::render("reproduce.Rmd")`) to regenerate:
+
+| Output | Section |
+|--------|---------|
+| Marine network (39 nodes / 152 edges) | \@ref(marine-network) |
+| **Table 2** — node in/out degree | \@ref(table-2-node-degrees) |
+| **Table 3** — four-layer net flow | \@ref(table-3-four-layer-net-flow) |
+| **Table 4** — 15-class marine vs mainland | \@ref(table-4-15-class-comparison) |
+| **Figure 1** — marine network, in/out degree | \@ref(figure-1) |
+| **Figure 2** — marine vs mainland, 15 classes | \@ref(figure-2) |
+| **Figure 3 / Sect. 3.4** — robustness & sampling sufficiency | \@ref(figure-3-robustness) |
+
+**Paths are relative** (this file sits at the repository root) and use
+`file.path()`, which is correct on Windows, Linux and macOS alike — no per-OS
+branching is needed (R also accepts `/` on Windows). The operating system this
+run used is printed in the Session information at the end.
+
+```{r libraries}
+## Required packages (install once): docxtractr, igraph, dplyr
+for (p in c("docxtractr", "igraph", "dplyr"))
+  if (!requireNamespace(p, quietly = TRUE))
+    stop(sprintf("Please install.packages('%s')", p))
+suppressMessages({library(igraph); library(dplyr)})
+cat("Running on:", Sys.info()[["sysname"]], "| R", as.character(getRversion()), "\n")
+```
+
+```{r paths}
+## Relative paths from the repository root (cross-platform via file.path()).
+data_dir   <- "data"
+marine_f   <- file.path(data_dir, "marine", "tsunami_Dohmen_2025_EQ.docx")
+mainland_f <- file.path(data_dir, "mainland_china",
+                        paste0("earthquake_table_China_4_", c("E", "N", "SW", "NW"), ".docx"))
+stopifnot(file.exists(marine_f), all(file.exists(mainland_f)))
+```
+
+# Helper functions
+
+`read_doc()` reads the first table of a `.docx`; the only column used is the
+machine-readable **`Proposed Encoding`** field (chains such as
+`SEQ,TS;TS,CFL;CFL,PP;`). `build_graph()` turns those encodings into a directed
+graph: chains are split on `;`, pairs on `,`, whitespace is trimmed so `" TS"`
+and `"TS"` are not treated as different nodes, and the union of all chains is
+de-duplicated. **Self-loops are retained** here (one edge, `PP -> PP`, exists in
+the record and is part of the 152-edge fine network; it is removed only for the
+15-class comparison, exactly as the paper states).
+
+```{r helpers}
+read_doc <- function(path) {
+  tb <- docxtractr::docx_extract_tbl(docxtractr::read_docx(path), tbl_number = 1)
+  as.data.frame(tb, check.names = FALSE)
+}
+
+## robustly locate the "Proposed Encoding" column (dot or space in the name)
+encoding_of <- function(df) df[[ grep("Encoding", names(df), ignore.case = TRUE)[1] ]]
+
+build_graph <- function(paths) {
+  x   <- do.call(rbind, lapply(paths, read_doc))
+  enc <- encoding_of(x)
+  from <- character(0); to <- character(0)
+  for (s in enc) for (seg in strsplit(s, ";")[[1]]) {
+    pr <- trimws(strsplit(seg, ",")[[1]])
+    if (length(pr) >= 2 && all(nzchar(pr[1:2]))) { from <- c(from, pr[1]); to <- c(to, pr[2]) }
+  }
+  final <- dplyr::distinct(data.frame(from = from, to = to))  # unique directed edges (self-loops kept)
+  igraph::graph_from_data_frame(final, directed = TRUE)
+}
+```
+
+# Marine network {#marine-network}
+
+The fine marine network is built from `r basename(marine_f)` (366 documented
+cascade chains, 39 peril codes).
+
+```{r marine-network}
+g_marine <- build_graph(marine_f)
+cat(sprintf("Marine fine network: %d nodes, %d directed edges (incl. 1 self-loop PP->PP)\n",
+            vcount(g_marine), ecount(g_marine)))
+```
+
+# Table 2: node degrees {#table-2-node-degrees}
+
+In/out degree of every node on the **fine** network (self-loop retained, so the
+PP self-loop contributes +1 to both PP's in- and out-degree, giving PP = in 9 /
+out 1, as in the paper). `net = out − in`.
+
+```{r table-2}
+deg_tab <- data.frame(
+  Code = V(g_marine)$name,
+  In   = degree(g_marine, mode = "in"),
+  Out  = degree(g_marine, mode = "out"),
+  Net  = degree(g_marine, mode = "out") - degree(g_marine, mode = "in"),
+  row.names = NULL)
+## the paper's Table 2 lists nodes with in- or out-degree >= 7 (upper quartile)
+core <- deg_tab[deg_tab$In >= 7 | deg_tab$Out >= 7, ]
+knitr::kable(core[order(-core$Out, -core$In), ], row.names = FALSE,
+             caption = "Table 2 — core nodes (in- or out-degree >= 7).")
+```
+
+# Table 3: four-layer net flow {#table-3-four-layer-net-flow}
+
+Nodes are aggregated into the four cascade layers; **net flow = out − in** summed
+over each layer's members. Expected: **+42 / +1 / −16 / −27** (sums to 0).
+
+```{r table-3}
+layer_fine <- c(
+  SEQ="Trigger", EQ="Trigger", AS="Trigger", VE="Trigger",
+  SLS="Natural", CLS="Natural", LS="Natural", RO="Natural", LB="Natural", SA="Natural",
+  LI="Natural", GU="Natural", SUB="Natural", MB="Natural", TS="Natural", CFL="Natural",
+  FF="Natural", MED="Natural", WP="Natural", WD="Natural", DI="Natural", FA="Natural",
+  PHF="Engineering", SDF="Engineering", SPF="Engineering", SCF="Engineering", NFA="Engineering",
+  FI="Engineering", EX="Engineering", CF="Engineering", NF="Engineering",
+  MTD="Consequence", BI="Consequence", EC="Consequence", PP="Consequence",
+  HD="Consequence", IR="Consequence", SU="Consequence", CP="Consequence")
+L4 <- c("Trigger", "Natural", "Engineering", "Consequence")
+
+layer_flow <- function(g, lmap, levels) {
+  lay <- factor(lmap[V(g)$name], levels = levels)
+  o <- tapply(degree(g, mode = "out"), lay, sum); o[is.na(o)] <- 0
+  i <- tapply(degree(g, mode = "in"),  lay, sum); i[is.na(i)] <- 0
+  data.frame(Layer = levels, Nodes = as.integer(table(lay)[levels]),
+             `Out-flow` = as.integer(o[levels]), `In-flow` = as.integer(i[levels]),
+             `Net flow` = as.integer(o[levels] - i[levels]),
+             `Net %`   = round((o[levels] - i[levels]) / ecount(g) * 100, 1),
+             check.names = FALSE)
+}
+t3 <- layer_flow(g_marine, layer_fine, L4)
+knitr::kable(rbind(t3, data.frame(Layer="Total", Nodes=sum(t3$Nodes),
+             `Out-flow`=sum(t3$`Out-flow`), `In-flow`=sum(t3$`In-flow`),
+             `Net flow`=sum(t3$`Net flow`), `Net %`=round(sum(t3$`Net %`),1), check.names=FALSE)),
+             row.names = FALSE, caption = "Table 3 — four-layer net flow (fine network).")
+```
+
+# Table 4: 15-class comparison {#table-4-15-class-comparison}
+
+Both chains are reduced to the **same 15 classes** and **simplified (duplicate
+edges and self-loops removed)** before any metric is computed. The 39 → 15
+mapping (also given in the paper's appendix) is:
+
+```{r coarse-map}
+coarse_map <- c(
+  SEQ="EQ or AS", AS="EQ or AS", EQ="EQ or AS", VE="EQ or AS",
+  GU="Mass Slide", SLS="Mass Slide", CLS="Mass Slide", LI="Mass Slide", MB="Mass Slide",
+  SUB="Mass Slide", LS="Mass Slide", RO="Mass Slide", LB="Mass Slide", SA="Mass Slide",
+  PHF="Critical Infra. Fail.", SDF="Critical Infra. Fail.", CF="Critical Infra. Fail.",
+  NFA="Critical Infra. Fail.", SPF="Critical Infra. Fail.",
+  BI="Business Interr.", MTD="Business Interr.", WP="Water Dil.", WD="Water Dil.",
+  NF="Critical NET Fail.", SCF="Critical NET Fail.", FA="Flora an Fauna", MED="Flora an Fauna",
+  FI="Fire", EX="Fire", IR="Healthcare Deg.", HD="Healthcare Deg.",
+  TS="Flood", CFL="Flood", FF="Flood",
+  EC="Econ. Crisis", DI="Disease", PP="Phy.-Psych. Trauma", CP="Culture Perils", SU="Social Unrest")
+stopifnot(length(setdiff(V(g_marine)$name, names(coarse_map))) == 0)  # every marine node is mapped
+```
+
+```{r build-coarse}
+## contract the fine marine graph to 15 classes; mainland is already 15-class
+grp <- factor(coarse_map[V(g_marine)$name])
+g_marine_c <- contract(g_marine, as.integer(grp), vertex.attr.comb = "first")
+V(g_marine_c)$name <- levels(grp)
+g_marine_c   <- simplify(g_marine_c, remove.multiple = TRUE, remove.loops = TRUE)  # -> 57 edges
+
+g_mainland   <- build_graph(mainland_f)
+g_mainland_c <- simplify(g_mainland, remove.multiple = TRUE, remove.loops = TRUE)  # -> 47 edges
+```
+
+Comparable topology metrics. **Out/in-degree centralisation uses the paper's
+Eq. (15)**, `sum(d_max − d_i) / (N−1)^2` (identical to `igraph::centr_degree`
+once self-loops are removed).
+
+```{r table-4}
+Cfree <- function(g, mode) { d <- degree(g, mode = mode); N <- vcount(g)
+  sum(max(d) - d) / ((N - 1)^2) }
+topo <- function(g, name) data.frame(
+  Network = name, `Nodes/edges` = sprintf("%d / %d", vcount(g), ecount(g)),
+  Density = round(edge_density(g, loops = FALSE), 3),
+  `C_out` = round(Cfree(g, "out"), 3), `C_in` = round(Cfree(g, "in"), 3),
+  `Max out-deg` = max(degree(g, mode = "out")),
+  `Src/Sink` = sprintf("%d / %d", sum(degree(g,mode="in")==0), sum(degree(g,mode="out")==0)),
+  `Mean path` = round(mean_distance(g, directed = TRUE), 2), check.names = FALSE)
+knitr::kable(rbind(topo(g_marine_c, "Marine (15)"), topo(g_mainland_c, "Mainland")),
+             row.names = FALSE, caption = "Table 4 — 15-class comparison.")
+
+## layer net flow (%) at 15-class resolution
+layer15 <- c("EQ or AS"="Trigger",
+  "Mass Slide"="Natural","Water Dil."="Natural","Flora an Fauna"="Natural","Flood"="Natural","Disease"="Natural",
+  "Critical Infra. Fail."="Engineering","Critical NET Fail."="Engineering","Fire"="Engineering",
+  "Business Interr."="Consequence","Healthcare Deg."="Consequence","Econ. Crisis"="Consequence",
+  "Phy.-Psych. Trauma"="Consequence","Culture Perils"="Consequence","Social Unrest"="Consequence")
+knitr::kable(data.frame(Layer = L4,
+  `Marine %`   = layer_flow(g_marine_c,   layer15, L4)$`Net %`,
+  `Mainland %` = layer_flow(g_mainland_c, layer15, L4)$`Net %`, check.names = FALSE),
+  row.names = FALSE, caption = "Table 4 — layer net flow (% of edges).")
+```
+
+# Figure 1 {#figure-1}
+
+**What it shows / how it is made:** the fine 39-node marine network, drawn twice
+with a shared force-directed layout (`igraph::layout_with_fr`, `set.seed(123)`
+for reproducibility). Node **colour and size encode degree** on a yellow→red
+scale; panel (a) uses in-degree, panel (b) out-degree (zero-out-degree nodes
+white). This is the code behind the paper's `fig01.png`.
+
+```{r figure-1, fig.width=13, fig.height=6.2}
+pal <- colorRampPalette(c("#FFF886", "#d21d13"))
+plot_deg <- function(g, layout, metric, zero_white = FALSE) {
+  m <- metric / max(metric)
+  col <- pal(500)[as.numeric(cut(m, breaks = 500))]; if (zero_white) col[metric == 0] <- "white"
+  s <- sqrt(metric); vs <- 4 + (if (max(s)==0) 0 else s/max(s)) * 14
+  plot(g, layout = layout, vertex.size = vs, vertex.color = col,
+       vertex.frame.color = adjustcolor("grey30", .5),
+       vertex.label = V(g)$name, vertex.label.family = "sans",
+       vertex.label.color = "black", vertex.label.cex = .8, vertex.label.font = 2,
+       edge.arrow.size = .35, edge.width = .6, edge.curved = .15,
+       edge.color = adjustcolor("grey60", .45))
+}
+set.seed(123); lay1 <- layout_with_fr(g_marine, niter = 3000)
+par(mfrow = c(1, 2), mar = c(0, 0, 2, 0))
+plot_deg(g_marine, lay1, degree(g_marine, mode = "in"));  title("(a) in-degree")
+plot_deg(g_marine, lay1, degree(g_marine, mode = "out"), zero_white = TRUE); title("(b) out-degree")
+```
+
+# Figure 2 {#figure-2}
+
+**What it shows / how it is made:** the marine (15 classes) and mainland (15
+classes) networks on **one shared force-directed layout** so each class sits in
+the same place across panels. Four panels: marine in/out degree, mainland in/out
+degree; colour and size encode degree. This is the code behind `fig02a.png`.
+
+```{r figure-2, fig.width=12, fig.height=11}
+abbr <- c("EQ or AS"="EQ","Mass Slide"="MS","Critical Infra. Fail."="CIF","Business Interr."="BI",
+  "Water Dil."="WD","Critical NET Fail."="CNF","Flora an Fauna"="FA","Fire"="FI",
+  "Healthcare Deg."="HD","Flood"="FL","Econ. Crisis"="EC","Disease"="DI",
+  "Phy.-Psych. Trauma"="PP","Culture Perils"="CP","Social Unrest"="SU")
+common <- sort(unique(c(V(g_marine_c)$name, V(g_mainland_c)$name)))
+uni <- graph_from_data_frame(
+  rbind(igraph::as_data_frame(g_marine_c), igraph::as_data_frame(g_mainland_c)),
+  directed = TRUE, vertices = data.frame(name = common))
+set.seed(123); lay2 <- layout_with_fr(uni, niter = 3000); rownames(lay2) <- V(uni)$name
+panel <- function(g, mode, ttl) {
+  m <- degree(g, mode = mode); mm <- if (max(m)==0) m else m/max(m)
+  col <- pal(500)[as.numeric(cut(mm, breaks = 500))]; if (mode=="out") col[m==0] <- "white"
+  s <- sqrt(m); vs <- 12 + (if (max(s)==0) 0 else s/max(s)) * 26
+  plot(g, layout = lay2[V(g)$name, ], vertex.size = vs, vertex.color = col,
+       vertex.frame.color = adjustcolor("grey30", .5), vertex.label = abbr[V(g)$name],
+       vertex.label.color = "black", vertex.label.cex = 1.4, vertex.label.font = 2,
+       edge.color = adjustcolor("grey60", .5), edge.width = .7, edge.arrow.size = .35,
+       edge.curved = .15, main = ttl)
+}
+par(mfrow = c(2, 2), mar = c(1, 1, 2.5, 1))
+panel(g_marine_c, "in", "(a) Marine — in-degree");    panel(g_marine_c, "out", "(b) Marine — out-degree")
+panel(g_mainland_c, "in", "(c) Mainland — in-degree"); panel(g_mainland_c, "out", "(d) Mainland — out-degree")
+```
+
+# Figure 3 / Sect. 3.4: robustness & sampling sufficiency {#figure-3-robustness}
+
+**What it shows / how it is made:** the 366 chains cluster under **58 source
+events (tsunamis)**, so all resampling is at the **event level** (cluster
+bootstrap). Panel (a) is the edge-accumulation (sampling-sufficiency) curve;
+panel (b) is the fraction of `B=1000` event-bootstrap resamples in which each
+qualitative conclusion holds (C1 pure sources; C2 dominant hubs SEQ/CF; C3
+NF-as-convergence; C4 monotone four-layer cascade).
+
+```{r robustness, fig.width=10, fig.height=4.2}
+set.seed(1)
+x <- read_doc(marine_f)
+id <- x[[ grep("^ID$|ID", names(x))[1] ]]; enc <- encoding_of(x)
+cur <- NA; ev <- character(length(enc))                     # forward-fill event id
+for (i in seq_along(enc)) { if (!is.na(id[i]) && nzchar(trimws(id[i]))) cur <- id[i]; ev[i] <- cur }
+chain_edges <- lapply(seq_along(enc), function(i) {
+  e <- character(0)
+  for (seg in strsplit(enc[i], ";")[[1]]) { pr <- trimws(strsplit(seg, ",")[[1]])
+    if (length(pr) >= 2 && all(nzchar(pr[1:2]))) e <- c(e, paste(pr[1], pr[2], sep = "|")) }
+  unique(e) })
+events   <- unique(ev)
+ev_edges <- lapply(events, function(g) unique(unlist(chain_edges[ev == g])))
+n_ev <- length(events); full <- length(unique(unlist(ev_edges)))
+efreq <- table(unlist(ev_edges))
+
+build_e  <- function(edges) { ee <- do.call(rbind, strsplit(edges, "\\|"))
+  graph_from_data_frame(data.frame(from = ee[,1], to = ee[,2]), directed = TRUE) }
+concl <- function(g) { dout <- degree(g, mode="out"); din <- degree(g, mode="in")
+  nm <- V(g)$name; gv <- function(v,d) if (v%in%nm) d[v] else 0
+  L <- layer_fine[nm]; nf <- sapply(L4, function(k) sum(dout[L==k]) - sum(din[L==k]))
+  c(C1 = setequal(nm[din==0], c("SEQ","EQ")),
+    C2 = (names(which.max(dout))=="SEQ" && names(which.max(din))=="CF"),
+    C3 = (gv("NF",din) > gv("NF",dout)),
+    C4 = (nf["Trigger"]>nf["Natural"] && nf["Natural"]>nf["Engineering"] &&
+          nf["Engineering"]>nf["Consequence"] && nf["Trigger"]>0 && nf["Consequence"]<0)) }
+
+B <- 1000
+stab <- rowMeans(sapply(1:B, function(b)
+  concl(build_e(unique(unlist(ev_edges[sample(n_ev, n_ev, replace = TRUE)])))))) * 100
+fr  <- seq(.05, 1, .05)
+acc <- sapply(fr, function(f) { k <- max(1, round(f*n_ev))
+  mean(sapply(1:200, function(s) length(unique(unlist(ev_edges[sample(n_ev, k)]))))) })
+fold <- sample(rep(1:5, length.out = n_ev))
+core_cov <- mean(sapply(1:5, function(f) { tr <- unique(unlist(ev_edges[fold!=f]))
+  te <- intersect(names(efreq)[efreq>=2], unique(unlist(ev_edges[fold==f])))
+  if (length(te)==0) NA else 100*sum(te %in% tr)/length(te) }), na.rm = TRUE)
+
+par(mfrow = c(1, 2), mar = c(4.2, 4.2, 2.4, 1))
+plot(100*fr, 100*acc/full, type = "o", pch = 19, col = "#d21d13", ylim = c(0,100),
+     xlab = "Source events (tsunamis) used (%)", ylab = "Unique edges recovered (%)",
+     main = "(a) Sampling sufficiency")
+abline(h = core_cov, lty = 2, col = "grey40")
+barplot(stab, col = "#F2A43A", ylim = c(0,100), names.arg = c("C1","C2","C3","C4"),
+        ylab = "Holds in resamples (%)", main = "(b) Conclusion stability (event bootstrap)")
+abline(h = 95, lty = 2, col = "grey40")
+cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sample: %.1f%%\n",
+            n_ev, paste(round(stab), collapse="/"), core_cov))
+```
+
+# Session information
+
+```{r session}
+cat("OS:", Sys.info()[["sysname"]], Sys.info()[["release"]], "\n")
+sessionInfo()
+```
