@@ -9,6 +9,7 @@ the network figures and the A/M interaction-matrix heatmaps.
 |------|------|
 | `multi_hazard_China_sy.R` | Main script: reads a cascade table, builds the directed graph, computes degree/closeness/betweenness, draws the in/out-degree network figures, and the per-step A and M heatmaps. |
 | `different_functions.R` | Helpers: `read_doc()` (extract table 1 from a `.docx`) and `mk_colors()` (bin transition values for the heatmaps). |
+| `reproduce_paper_data.R` | Minimal, figure-free reproduction: rebuilds the marine 39-node network and the 15-class marine/mainland networks and prints only the reported **Table 2 / 3 / 4** numbers. Self-contained (`read_doc()` falls back to `docxtractr`). Run with `Rscript reproduce_paper_data.R` from `code/`. |
 
 ## Dependencies (R)
 ```r
