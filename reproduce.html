@@ -11,7 +11,7 @@
 
 <meta name="author" content="Shi, Hu, Zhang" />
 
-<meta name="date" content="2026-07-02" />
+<meta name="date" content="2026-07-03" />
 
 <title>Reproducing the marine seismic hazard-chain results</title>
 
@@ -444,7 +444,7 @@ results</h1>
 Chains (NHESS) — one document that regenerates every table and
 figure</h3>
 <h4 class="author">Shi, Hu, Zhang</h4>
-<h4 class="date">2026-07-02</h4>
+<h4 class="date">2026-07-03</h4>
 
 </div>
 
@@ -462,7 +462,8 @@ comparison</a></li>
 <li><a href="#figure-2" id="toc-figure-2"><span class="toc-section-number">8</span> Figure 2</a></li>
 <li><a href="#figure-3-robustness" id="toc-figure-3-robustness"><span class="toc-section-number">9</span> Figure 3 / Sect. 3.4: robustness
 &amp; sampling sufficiency</a></li>
-<li><a href="#session-information" id="toc-session-information"><span class="toc-section-number">10</span> Session information</a></li>
+<li><a href="#viewer-data" id="toc-viewer-data"><span class="toc-section-number">10</span> Interactive viewer data</a></li>
+<li><a href="#session-information" id="toc-session-information"><span class="toc-section-number">11</span> Session information</a></li>
 </ul>
 </div>
 
@@ -1006,8 +1007,78 @@ abline(h = 95, lty = 2, col = &quot;grey40&quot;)</code></pre>
             n_ev, paste(round(stab), collapse=&quot;/&quot;), core_cov))</code></pre>
 <pre><code>## events=58 | C1..C4 hold in 88/97/100/97% | core edges recovered out-of-sample: 98.6%</code></pre>
 </div>
-<div id="session-information" class="section level1" number="10">
-<h1><span class="header-section-number">10</span> Session
+<div id="viewer-data" class="section level1" number="10">
+<h1><span class="header-section-number">10</span> Interactive viewer
+data</h1>
+<p><strong>What it makes / why:</strong> the interactive network viewer
+linked from the figure captions (<code>docs/index.html</code>, served at
+<a href="https://chunyuhu.com/NHESS-marine-seismic-hazard-chains-code-data/" class="uri">https://chunyuhu.com/NHESS-marine-seismic-hazard-chains-code-data/</a>)
+is driven by <code>docs/graph-data.js</code>. This chunk regenerates
+that file <strong>from the very same graph objects</strong> used for the
+tables and figures above (<code>g_marine</code>,
+<code>g_marine_c</code>, <code>g_mainland_c</code>), so the web page,
+the paper figures, and the tables are guaranteed to be one and the same
+network — no hand-maintained copy can drift. <code>jsonlite</code> ships
+with <code>rmarkdown</code>, so knitting this document already provides
+it. The only extra input is the human-readable peril names used for the
+tooltips.</p>
+<pre class="r"><code>## full peril names for the 39 fine nodes (viewer tooltips only; no metric uses them)
+full_name_fine &lt;- c(
+  SEQ=&quot;Submarine Earthquake&quot;, EQ=&quot;Coastal Earthquake&quot;, AS=&quot;Aftershock&quot;, VE=&quot;Volcanic Eruption&quot;,
+  SLS=&quot;Submarine Landslide&quot;, CLS=&quot;Coastal Landslide&quot;, LS=&quot;Landslide&quot;, RO=&quot;Rockfall&quot;, LB=&quot;Lake Burst&quot;,
+  SA=&quot;Snow Avalanche&quot;, LI=&quot;Liquefaction&quot;, GU=&quot;Ground Uplift&quot;, SUB=&quot;Subsidence&quot;, MB=&quot;Methane Blowout&quot;,
+  TS=&quot;Tsunami&quot;, CFL=&quot;Coastal Flooding&quot;, FF=&quot;Fluvial Flood&quot;, MED=&quot;Marine Ecosystem Damage&quot;,
+  WP=&quot;Water Pollution&quot;, WD=&quot;Water Dilemma&quot;, DI=&quot;Disease&quot;, FA=&quot;Flora and Fauna&quot;,
+  PHF=&quot;Port / Harbour Failure&quot;, SDF=&quot;Seawall / Dike Failure&quot;, SPF=&quot;Subsea Pipeline Failure&quot;,
+  SCF=&quot;Subsea Cable Failure&quot;, NFA=&quot;Nuclear Facility Accident&quot;, FI=&quot;Fire&quot;, EX=&quot;Explosion&quot;,
+  CF=&quot;Critical Infrastructure Failure&quot;, NF=&quot;Critical Network Failure&quot;,
+  MTD=&quot;Maritime Transport Disruption&quot;, BI=&quot;Business Interruption&quot;, EC=&quot;Economic Crisis&quot;,
+  PP=&quot;Physical &amp; Psychological Trauma&quot;, HD=&quot;Healthcare Degradation&quot;, IR=&quot;Insufficient Rescue&quot;,
+  SU=&quot;Social Unrest&quot;, CP=&quot;Culture Perils&quot;)
+stopifnot(setequal(names(full_name_fine), V(g_marine)$name))  # every fine node has a name
+
+ident &lt;- function(g) { n &lt;- V(g)$name; setNames(n, n) }
+mk_nodes &lt;- function(g, label, full, layer) {
+  nm &lt;- V(g)$name
+  df &lt;- data.frame(id = nm, label = unname(label[nm]), full = unname(full[nm]),
+                   layer = unname(layer[nm]),
+                   `in`  = as.integer(degree(g, mode = &quot;in&quot;)),
+                   out   = as.integer(degree(g, mode = &quot;out&quot;)),
+                   check.names = FALSE, stringsAsFactors = FALSE)
+  df[order(df$id), , drop = FALSE]                 # deterministic order (platform-independent)
+}
+mk_edges &lt;- function(g) { e &lt;- igraph::as_data_frame(g)[, c(&quot;from&quot;, &quot;to&quot;)]
+  e[order(e$from, e$to), , drop = FALSE] }
+
+GRAPHS &lt;- list(
+  fig1       = list(nodes = mk_nodes(g_marine,     ident(g_marine),     full_name_fine,     layer_fine),
+                    edges = mk_edges(g_marine)),
+  marine15   = list(nodes = mk_nodes(g_marine_c,   abbr, ident(g_marine_c),   layer15),
+                    edges = mk_edges(g_marine_c)),
+  mainland15 = list(nodes = mk_nodes(g_mainland_c, abbr, ident(g_mainland_c), layer15),
+                    edges = mk_edges(g_mainland_c)))
+
+if (!requireNamespace(&quot;jsonlite&quot;, quietly = TRUE)) {
+  message(&quot;jsonlite not available; skipping docs/graph-data.js regeneration.&quot;)
+} else if (dir.exists(&quot;docs&quot;)) {
+  js &lt;- paste0(
+    &quot;// Auto-generated by reproduce.Rmd from the docx sources in data/. Do not edit by hand.\n&quot;,
+    &quot;const GRAPHS = &quot;, jsonlite::toJSON(GRAPHS, auto_unbox = TRUE, pretty = TRUE), &quot;;\n&quot;)
+  writeLines(js, file.path(&quot;docs&quot;, &quot;graph-data.js&quot;))
+  cat(sprintf(&quot;Wrote docs/graph-data.js  |  fig1 %d/%d, marine15 %d/%d, mainland15 %d/%d (nodes/edges)\n&quot;,
+    nrow(GRAPHS$fig1$nodes),       nrow(GRAPHS$fig1$edges),
+    nrow(GRAPHS$marine15$nodes),   nrow(GRAPHS$marine15$edges),
+    nrow(GRAPHS$mainland15$nodes), nrow(GRAPHS$mainland15$edges)))
+} else {
+  message(&quot;docs/ folder not found next to reproduce.Rmd; skipping viewer regeneration.&quot;)
+}</code></pre>
+<pre><code>## Wrote docs/graph-data.js  |  fig1 39/152, marine15 15/57, mainland15 15/47 (nodes/edges)</code></pre>
+<p>The web viewer therefore shares its single source of truth with Figs
+1–2 and Tables 2–4: re-knit this document and the interactive page
+updates automatically.</p>
+</div>
+<div id="session-information" class="section level1" number="11">
+<h1><span class="header-section-number">11</span> Session
 information</h1>
 <pre class="r"><code>cat(&quot;OS:&quot;, Sys.info()[[&quot;sysname&quot;]], Sys.info()[[&quot;release&quot;]], &quot;\n&quot;)</code></pre>
 <pre><code>## OS: Linux 6.11.0-1016-nvidia</code></pre>
@@ -1020,10 +1091,12 @@ information</h1>
 ## BLAS/LAPACK: /home/chunyu/.conda/envs/rhaz/lib/libopenblasp-r0.3.33.so;  LAPACK version 3.12.0
 ## 
 ## locale:
-##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
-##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
-##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
-## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+##  [1] LC_CTYPE=en_US.utf8       LC_NUMERIC=C             
+##  [3] LC_TIME=en_US.utf8        LC_COLLATE=en_US.utf8    
+##  [5] LC_MONETARY=en_US.utf8    LC_MESSAGES=en_US.utf8   
+##  [7] LC_PAPER=en_US.utf8       LC_NAME=C                
+##  [9] LC_ADDRESS=C              LC_TELEPHONE=C           
+## [11] LC_MEASUREMENT=en_US.utf8 LC_IDENTIFICATION=C      
 ## 
 ## time zone: UTC
 ## tzcode source: system (glibc)
