@@ -4,8 +4,6 @@ Reproducibility materials for *Quantitative Modelling of Marine Seismic Hazard
 Chains: Topology, Core Amplification Nodes, and Implications* (Shi, Hu, Zhang;
 submitted to *Natural Hazards and Earth System Sciences*).
 
-Manuscript (LaTeX) repository: <https://github.com/Chunyu-Hugh/NHESS-marine-seismic-hazard-chains>
-
 **Interactive network viewer (Figs 1 & 2):** <https://hazardchain.github.io/NHESS-marine-seismic-hazard-chains-code-data/>
 — click any node to trace its couplings; Chinese / English toggle. Source in [`docs/`](docs/).
 
