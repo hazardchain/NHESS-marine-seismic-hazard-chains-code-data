@@ -351,7 +351,7 @@ cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sampl
 
 **What it makes / why:** the interactive network viewer linked from the figure
 captions (`docs/index.html`, served at
-<https://chunyuhu.com/NHESS-marine-seismic-hazard-chains-code-data/>) is driven
+<https://hazardchain.github.io/NHESS-marine-seismic-hazard-chains-code-data/>) is driven
 by `docs/graph-data.js`. This chunk regenerates that file **from the very same
 graph objects** used for the tables and figures above (`g_marine`,
 `g_marine_c`, `g_mainland_c`), so the web page, the paper figures, and the
