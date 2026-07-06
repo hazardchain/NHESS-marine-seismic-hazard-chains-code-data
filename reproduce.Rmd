@@ -250,10 +250,26 @@ plot_deg <- function(g, layout, metric, zero_white = FALSE) {
        edge.arrow.size = .35, edge.width = .6, edge.curved = .15,
        edge.color = adjustcolor("grey60", .45))
 }
+## helper: write a 300-dpi TIFF (LZW) and optionally a PNG of a plot, then draw it inline
+export_fig <- function(plotfun, base, w, h, png = FALSE) {
+  dir.create("figures", showWarnings = FALSE)
+  tiff(file.path("figures", paste0(base, "_300dpi.tif")),
+       width = w, height = h, units = "in", res = 300, compression = "lzw")
+  plotfun(); invisible(dev.off())
+  if (png) {
+    png(file.path("figures", paste0(base, "_300dpi.png")),
+        width = w, height = h, units = "in", res = 300)
+    plotfun(); invisible(dev.off())
+  }
+  plotfun()
+}
 set.seed(123); lay1 <- layout_with_fr(g_marine, niter = 3000)
-par(mfrow = c(1, 2), mar = c(0, 0, 2, 0))
-plot_deg(g_marine, lay1, degree(g_marine, mode = "in"));  title("(a) in-degree")
-plot_deg(g_marine, lay1, degree(g_marine, mode = "out"), zero_white = TRUE); title("(b) out-degree")
+draw_fig1 <- function() {
+  par(mfrow = c(1, 2), mar = c(0, 0, 2, 0))
+  plot_deg(g_marine, lay1, degree(g_marine, mode = "in"));  title("(a) in-degree")
+  plot_deg(g_marine, lay1, degree(g_marine, mode = "out"), zero_white = TRUE); title("(b) out-degree")
+}
+export_fig(draw_fig1, "fig01", 13, 6.2)
 ```
 
 # Figure 2 {#figure-2}
@@ -283,9 +299,12 @@ panel <- function(g, mode, ttl) {
        edge.color = adjustcolor("grey60", .5), edge.width = .7, edge.arrow.size = .35,
        edge.curved = .15, main = ttl)
 }
-par(mfrow = c(2, 2), mar = c(1, 1, 2.5, 1))
-panel(g_marine_c, "in", "(a) Marine — in-degree");    panel(g_marine_c, "out", "(b) Marine — out-degree")
-panel(g_mainland_c, "in", "(c) Mainland — in-degree"); panel(g_mainland_c, "out", "(d) Mainland — out-degree")
+draw_fig2 <- function() {
+  par(mfrow = c(2, 2), mar = c(1, 1, 2.5, 1))
+  panel(g_marine_c, "in", "(a) Marine — in-degree");    panel(g_marine_c, "out", "(b) Marine — out-degree")
+  panel(g_mainland_c, "in", "(c) Mainland — in-degree"); panel(g_mainland_c, "out", "(d) Mainland — out-degree")
+}
+export_fig(draw_fig2, "fig02", 12, 11)
 ```
 
 # Figure 3 / Sect. 3.4: robustness & sampling sufficiency {#figure-3-robustness}
@@ -335,14 +354,17 @@ core_cov <- mean(sapply(1:5, function(f) { tr <- unique(unlist(ev_edges[fold!=f]
   te <- intersect(names(efreq)[efreq>=2], unique(unlist(ev_edges[fold==f])))
   if (length(te)==0) NA else 100*sum(te %in% tr)/length(te) }), na.rm = TRUE)
 
-par(mfrow = c(1, 2), mar = c(4.2, 4.2, 2.4, 1))
-plot(100*fr, 100*acc/full, type = "o", pch = 19, col = "#d21d13", ylim = c(0,100),
-     xlab = "Source events (tsunamis) used (%)", ylab = "Unique edges recovered (%)",
-     main = "(a) Sampling sufficiency")
-abline(h = core_cov, lty = 2, col = "grey40")
-barplot(stab, col = "#F2A43A", ylim = c(0,100), names.arg = c("C1","C2","C3","C4"),
-        ylab = "Holds in resamples (%)", main = "(b) Conclusion stability (event bootstrap)")
-abline(h = 95, lty = 2, col = "grey40")
+draw_fig3 <- function() {
+  par(mfrow = c(1, 2), mar = c(4.2, 4.2, 2.4, 1))
+  plot(100*fr, 100*acc/full, type = "o", pch = 19, col = "#d21d13", ylim = c(0,100),
+       xlab = "Source events (tsunamis) used (%)", ylab = "Unique edges recovered (%)",
+       main = "(a) Sampling sufficiency")
+  abline(h = core_cov, lty = 2, col = "grey40")
+  barplot(stab, col = "#F2A43A", ylim = c(0,100), names.arg = c("C1","C2","C3","C4"),
+          ylab = "Holds in resamples (%)", main = "(b) Conclusion stability (event bootstrap)")
+  abline(h = 95, lty = 2, col = "grey40")
+}
+export_fig(draw_fig3, "fig03", 10, 4.2)
 cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sample: %.1f%%\n",
             n_ev, paste(round(stab), collapse="/"), core_cov))
 ```
@@ -422,7 +444,7 @@ is_new_v   <- V(g_union)$name %in% new_nodes
 
 vcol  <- ifelse(is_new_v, lay_col[layer_fine[V(g_union)$name]], "grey88")
 vlcol <- ifelse(is_new_v, "black", "grey70")
-ecol  <- ifelse(is_novel_e, "#8b0000", ifelse(is_new_e, "black", adjustcolor("grey75", .5)))
+ecol  <- ifelse(is_novel_e, "#8b0000", ifelse(is_new_e, "black", adjustcolor("grey40", .8)))
 ewid  <- ifelse(is_novel_e, 2.4, ifelse(is_new_e, 1.3, .5))
 
 set.seed(123); layU <- layout_with_fr(g_union, niter = 3000)
@@ -437,16 +459,10 @@ draw_overlay <- function() {
          cex = 1.0, title = "New-event nodes (by layer)")
   legend("bottomright",
          legend = c("novel edge (14; new only)", "new-event edge (also in record)", "original-only edge"),
-         col = c("#8b0000", "black", "grey70"), lwd = c(2.4, 1.3, .8), bty = "n", cex = 1.0)
+         col = c("#8b0000", "black", "grey40"), lwd = c(2.4, 1.3, .8), bty = "n", cex = 1.0)
 }
-## save a standalone 300-dpi PNG (publication quality), then render inline below
-dir.create("figures", showWarnings = FALSE)
-png(file.path("figures", "fig_overlay_events_300dpi.png"),
-    width = 11, height = 9.5, units = "in", res = 300)
-draw_overlay(); invisible(dev.off())
-cat(sprintf("saved figures/fig_overlay_events_300dpi.png (%.0f x %.0f px @ 300 dpi)\n",
-            11 * 300, 9.5 * 300))
-draw_overlay()
+## save standalone 300-dpi TIFF + PNG (publication quality), then render inline below
+export_fig(draw_overlay, "fig_overlay_events", 11, 9.5, png = TRUE)
 ```
 
 ## Do the conclusions survive the new data?
