@@ -347,6 +347,130 @@ cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sampl
             n_ev, paste(round(stab), collapse="/"), core_cov))
 ```
 
+# Independent-event validation {#independent-event-validation}
+
+**What it shows / why:** three major submarine-earthquake tsunamis that are **absent
+from the paper's record** — the 2004 Indian Ocean (Sumatra-Andaman), the 1960
+Valdivia (Chile) and the 2018 Palu (Sulawesi) events — are encoded as documented,
+individually sourced cascade chains in
+`data/marine/tsunami_extra_events_2004_1960_2018_EQ.docx` (a `Source` column, ignored
+by the analysis, carries the provenance). This section (1) draws the three events on
+their own, (2) overlays them on the paper's network, and (3) tests whether the paper's
+conclusions survive the new data.
+
+## The three events on their own
+
+```{r extra-network, fig.width=13, fig.height=6.2}
+extra_f <- file.path(data_dir, "marine", "tsunami_extra_events_2004_1960_2018_EQ.docx")
+g_extra <- build_graph(extra_f)
+cat(sprintf("Extra-events network: %d nodes, %d directed edges\n", vcount(g_extra), ecount(g_extra)))
+set.seed(123); layE <- layout_with_fr(g_extra, niter = 3000)
+par(mfrow = c(1, 2), mar = c(0, 0, 2, 0))
+plot_deg(g_extra, layE, degree(g_extra, mode = "in"));  title("(a) in-degree")
+plot_deg(g_extra, layE, degree(g_extra, mode = "out"), zero_white = TRUE); title("(b) out-degree")
+```
+
+## The three events overlaid on the paper's network
+
+New-event **nodes are coloured by layer**, and the **edges and labels they contribute
+are drawn in black**; every node, edge and label that comes only from the original
+network is drawn in grey. The coloured/black footprint is what the three independent
+events add to, and reconfirm in, the paper's structure.
+
+```{r extra-overlay, fig.width=11, fig.height=9.5}
+lay_col <- c(Trigger = "#e4572e", Natural = "#2a9d8f",
+             Engineering = "#e9a220", Consequence = "#4a6fa5")
+E_orig  <- igraph::as_data_frame(g_marine)
+E_extra <- igraph::as_data_frame(g_extra)
+g_union <- graph_from_data_frame(unique(rbind(E_orig, E_extra)), directed = TRUE)
+
+new_nodes <- V(g_extra)$name
+new_ekey  <- paste(E_extra$from, E_extra$to)
+ekey_union <- with(igraph::as_data_frame(g_union), paste(from, to))
+is_new_e <- ekey_union %in% new_ekey
+is_new_v <- V(g_union)$name %in% new_nodes
+
+vcol  <- ifelse(is_new_v, lay_col[layer_fine[V(g_union)$name]], "grey88")
+vlcol <- ifelse(is_new_v, "black", "grey70")
+ecol  <- ifelse(is_new_e, "black", adjustcolor("grey75", .5))
+ewid  <- ifelse(is_new_e, 1.5, .5)
+
+set.seed(123); layU <- layout_with_fr(g_union, niter = 3000)
+par(mar = c(0, 0, 0, 0))
+plot(g_union, layout = layU,
+     vertex.size = 7, vertex.color = vcol, vertex.frame.color = adjustcolor("grey40", .5),
+     vertex.label = V(g_union)$name, vertex.label.family = "sans",
+     vertex.label.color = vlcol, vertex.label.cex = .8, vertex.label.font = 2,
+     edge.color = ecol, edge.width = ewid, edge.arrow.size = .3, edge.curved = .12)
+legend("bottomleft", legend = names(lay_col), col = lay_col, pch = 19, bty = "n",
+       cex = 1.0, title = "New-event nodes (by layer)")
+legend("bottomright", legend = c("new-event edge", "original-only edge"),
+       col = c("black", "grey70"), lwd = c(1.5, .8), bty = "n", cex = 1.0)
+```
+
+## Do the conclusions survive the new data?
+
+```{r extra-validation}
+selfless <- function(df) df[df$from != df$to, , drop = FALSE]
+orig_keys <- with(selfless(igraph::as_data_frame(g_marine)), paste(from, to))
+
+## (A) directed-edge coverage, per event and combined
+xx <- read_doc(extra_f); enc <- encoding_of(xx); id <- xx[[1]]
+cur <- NA; ev <- character(nrow(xx))
+for (i in seq_len(nrow(xx))) { if (!is.na(id[i]) && trimws(id[i]) != "") cur <- trimws(id[i]); ev[i] <- cur }
+edges_of <- function(s) {
+  e <- c(); for (p in strsplit(s, ";")[[1]]) { pr <- trimws(strsplit(p, ",")[[1]])
+    if (length(pr) >= 2 && all(nzchar(pr[1:2])) && pr[1] != pr[2]) e <- c(e, paste(pr[1], pr[2])) }
+  unique(e)
+}
+covA <- do.call(rbind, lapply(unique(ev), function(g) {
+  ek <- unique(unlist(lapply(enc[ev == g], edges_of)))
+  data.frame(Event = g, Links = length(ek), `In network` = sum(ek %in% orig_keys),
+             Coverage = sprintf("%.0f%%", 100 * mean(ek %in% orig_keys)), check.names = FALSE) }))
+all_ek <- unique(unlist(lapply(enc, edges_of)))
+covA <- rbind(covA, data.frame(Event = "ALL THREE", Links = length(all_ek),
+              `In network` = sum(all_ek %in% orig_keys),
+              Coverage = sprintf("%.0f%%", 100 * mean(all_ek %in% orig_keys)), check.names = FALSE))
+knitr::kable(covA, row.names = FALSE,
+             caption = sprintf("(A) Directed-edge coverage of the three independent events by the paper's network (%d novel enrichment links).",
+                               sum(!all_ek %in% orig_keys)))
+
+## (B) conclusion stability on original vs augmented network
+check <- function(g) {
+  g <- simplify(g, remove.multiple = TRUE, remove.loops = TRUE)
+  nm <- V(g)$name; ind <- degree(g, mode = "in"); outd <- degree(g, mode = "out"); lv <- layer_fine[nm]
+  net <- sapply(L4, function(k) sum(outd[lv == k]) - sum(ind[lv == k]))
+  list(N = vcount(g), E = ecount(g), src = sort(nm[ind == 0]),
+       to = nm[which.max(outd)], tov = max(outd), ti = nm[which.max(ind)], tiv = max(ind),
+       nfi = ind[nm == "NF"], nfo = outd[nm == "NF"], net = net,
+       C1 = setequal(nm[ind == 0], c("SEQ", "EQ")),
+       C2 = (nm[which.max(outd)] == "SEQ" && nm[which.max(ind)] == "CF"),
+       C3 = (ind[nm == "NF"] > outd[nm == "NF"]),
+       C4 = (net[["Trigger"]] > net[["Natural"]] && net[["Natural"]] > net[["Engineering"]] &&
+             net[["Engineering"]] > net[["Consequence"]] && net[["Trigger"]] > 0 && net[["Consequence"]] < 0))
+}
+g_aug <- graph_from_data_frame(unique(rbind(E_orig, E_extra)), directed = TRUE)
+b0 <- check(g_marine); b1 <- check(g_aug)
+fmt <- function(b) c(sprintf("%d / %d", b$N, b$E), paste(b$src, collapse = ", "),
+  sprintf("%s (%d)", b$to, b$tov), sprintf("%s (%d)", b$ti, b$tiv), sprintf("%d / %d", b$nfi, b$nfo),
+  sprintf("%+d / %+d / %+d / %+d", b$net[["Trigger"]], b$net[["Natural"]], b$net[["Engineering"]], b$net[["Consequence"]]),
+  b$C1, b$C2, b$C3, b$C4)
+tabB <- data.frame(Quantity = c("Nodes / edges", "Pure sources", "Top out-degree", "Top in-degree",
+  "NF in / out", "Layer net flow T/N/E/C", "C1 sources are only SEQ,EQ",
+  "C2 SEQ out-hub & CF in-hub", "C3 NF is convergence node", "C4 monotone four-layer cascade"),
+  `Original (58 events)` = fmt(b0), `Augmented (61 events)` = fmt(b1), check.names = FALSE)
+knitr::kable(tabB, row.names = FALSE,
+             caption = "(B) Core conclusions before and after merging the three independent events.")
+
+## (C) node-importance rank stability (Spearman)
+cm <- intersect(V(g_marine)$name, V(g_aug)$name)
+so <- cor(degree(g_marine, mode = "out")[cm], degree(g_aug, mode = "out")[cm], method = "spearman")
+si <- cor(degree(g_marine, mode = "in")[cm],  degree(g_aug, mode = "in")[cm],  method = "spearman")
+knitr::kable(data.frame(Metric = c("Out-degree ranking", "In-degree ranking"),
+  `Spearman (orig vs augmented)` = sprintf("%.3f", c(so, si)), check.names = FALSE),
+  row.names = FALSE, caption = "(C) Node-importance rank stability under the new data.")
+```
+
 # Interactive viewer data {#viewer-data}
 
 **What it makes / why:** the interactive network viewer linked from the figure
