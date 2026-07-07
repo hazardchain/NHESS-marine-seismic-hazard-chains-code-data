@@ -57,6 +57,7 @@
 <div class="bar">
   <button class="tab on" data-tab="t1" id="tab1"></button>
   <button class="tab" data-tab="t2" id="tab2"></button>
+  <button class="tab" data-tab="t3" id="tab3"></button>
   <span class="sp"></span>
   <span style="font-size:12px;color:var(--muted)" id="lblColor"></span>
   <button class="opt on" data-color="layer" id="optLayer"></button>
@@ -84,6 +85,10 @@
       <div><p class="cap" id="cap2b"></p><div id="net2b" class="net"></div></div>
     </div>
   </section>
+  <section class="view" id="t3">
+    <p class="cap" id="cap3"></p>
+    <div id="net3" class="net"></div>
+  </section>
 </main>
 
 <div id="info"></div>
@@ -95,9 +100,10 @@ const I18N={
   zh:{
     ttl:"海洋地震灾害链网络",
     desc:"基于 NHESS 论文数据的交互式复现。图 1 为 39 节点 / 152 条有向边的海洋灾害链细粒度网络;图 2 为统一到 15 个灾害类别后,海洋链与中国大陆链的对比。点击任意节点,与其直接相连的节点会高亮,其余节点变暗;再次点击空白处复位。",
-    tab1:"图 1 · 海洋网络 (39 节点)", tab2:"图 2 · 海洋 vs 大陆 (15 类)",
+    tab1:"图 1 · 海洋网络 (39 节点)", tab2:"图 2 · 海洋 vs 大陆 (15 类)", tab3:"图 3 · 三独立事件叠加",
     lblColor:"着色:", optLayer:"按层级", optDegree:"按度 (黄→红)",
     cap2a:"海洋链 · 15 类 (57 边)", cap2b:"中国大陆链 · 15 类 (47 边)",
+    cap3:"三个独立事件(2004 印度洋 / 1960 智利 / 2018 帕卢)叠加到海洋网络。新节点按层级着色;边:暗红 = 14 条新增边,黑 = 新事件已有边,灰 = 原网络边。点击任意节点,高亮其相连的节点与边,其余变暗。",
     legSize:"节点大小 = 总度数 (入 + 出)",
     foot:"数据与分类体系来自海洋地震灾害链手稿(Shi, Hu & Zhang),使用 vis-network 渲染。点击节点可追踪其耦合关系。",
     out:"出度", inn:"入度", nb:"相连节点", hint:"点击空白处复位",
@@ -107,9 +113,10 @@ const I18N={
   en:{
     ttl:"Marine Seismic Hazard-Chain Network",
     desc:"An interactive reproduction of the network figures from the marine seismic hazard-chain study. Figure 1 is the fine-grained marine chain (39 nodes, 152 directed edges); Figure 2 compares the marine and mainland-China chains after aggregating to 15 hazard classes. Click any node to light up its directly connected nodes and dim the rest; click empty space to reset.",
-    tab1:"Fig. 1 · Marine network (39 nodes)", tab2:"Fig. 2 · Marine vs Mainland (15 classes)",
+    tab1:"Fig. 1 · Marine network (39 nodes)", tab2:"Fig. 2 · Marine vs Mainland (15 classes)", tab3:"Fig. 3 · Three-event overlay",
     lblColor:"Colour:", optLayer:"By layer", optDegree:"By degree (yellow→red)",
     cap2a:"Marine chain · 15 classes (57 edges)", cap2b:"Mainland China chain · 15 classes (47 edges)",
+    cap3:"Three independent events (2004 Indian Ocean / 1960 Chile / 2018 Palu) overlaid on the marine network. New-event nodes are coloured by layer; edges: dark red = the 14 novel links, black = new-event links already in the record, grey = original-only links. Click any node to light up its neighbours and dim the rest.",
     legSize:"Node size = total degree (in + out)",
     foot:"Data and taxonomy from the marine seismic hazard-chain manuscript (Shi, Hu & Zhang). Rendered with vis-network. Click a node to trace its couplings.",
     out:"Out-degree", inn:"In-degree", nb:"Neighbours", hint:"Click empty space to reset",
@@ -143,6 +150,12 @@ const nodeTitle=n => `${fullName(n)}\n${layerName(n.layer)} · in ${n.in} / out 
 /* ---------------- network rendering ---------------- */
 const LAYER_COLORS={Trigger:'#e4572e',Natural:'#2a9d8f',Engineering:'#e9a220',Consequence:'#4a6fa5'};
 const DIM_NODE='rgba(155,165,175,0.18)', DIM_FONT='#c3cbd3', DIM_EDGE='rgba(190,197,204,0.12)';
+/* overlay (Fig. 3) colouring: new nodes by layer / old nodes grey; edges novel=dark red, new=black, old=grey */
+const OV_NODE_OLD='#c9d1d8';
+const OV_EDGE={novel:'#a3141c','new':'#2b2f36',old:'rgba(150,160,170,0.55)'};
+const ovNodeColor=n=>n.isNew?(LAYER_COLORS[n.layer]||'#888'):OV_NODE_OLD;
+const ovEdgeColor=e=>OV_EDGE[e.cat]||OV_EDGE.old;
+const ovEdgeWidth=e=>e.cat==='novel'?2.6:e.cat==='new'?1.6:0.7;
 function degColor(t){const a=[255,248,134],b=[210,29,19];
   const c=a.map((v,i)=>Math.round(v+(b[i]-v)*t));return `rgb(${c[0]},${c[1]},${c[2]})`;}
 let colorMode='layer';
@@ -153,16 +166,19 @@ function baseNodeColor(n,maxDeg){
 }
 function buildNet(containerId,key){
   const raw=GRAPHS[key];
+  const ov=(key==='overlay');
   const maxDeg=Math.max(...raw.nodes.map(n=>n.in+n.out),1);
+  const nodeBg=n=>ov?ovNodeColor(n):baseNodeColor(n,maxDeg);
   const nodes=new vis.DataSet(raw.nodes.map(n=>({
     id:n.id,label:n.label,title:nodeTitle(n),value:n.in+n.out+1,
-    color:{background:baseNodeColor(n,maxDeg),border:'#ffffff',
-           highlight:{background:baseNodeColor(n,maxDeg),border:'#1f2933'}},
-    font:{color:'#1f2933',size:15,face:'Helvetica',strokeWidth:3,strokeColor:'#fff'}
+    color:{background:nodeBg(n),border:'#ffffff',
+           highlight:{background:nodeBg(n),border:'#1f2933'}},
+    font:{color:(ov&&!n.isNew)?'#9aa4ae':'#1f2933',size:15,face:'Helvetica',strokeWidth:3,strokeColor:'#fff'}
   })));
   const edges=new vis.DataSet(raw.edges.map((e,i)=>({
     id:i,from:e.from,to:e.to,
-    color:{color:'rgba(120,132,144,0.45)',highlight:'#e4572e'},
+    color:{color:ov?ovEdgeColor(e):'rgba(120,132,144,0.45)',highlight:ov?ovEdgeColor(e):'#e4572e'},
+    width:ov?ovEdgeWidth(e):1.1,
     arrows:{to:{enabled:true,scaleFactor:0.5}},
     smooth:{type:'continuous',roundness:0.2}
   })));
@@ -179,7 +195,7 @@ function buildNet(containerId,key){
   const freeze=()=>network.setOptions({physics:false});
   network.once('stabilizationIterationsDone',()=>{freeze();network.fit();});
   setTimeout(freeze,4500);
-  const ctx={network,nodes,edges,raw,maxDeg,selected:null};
+  const ctx={network,nodes,edges,raw,maxDeg,selected:null,ov};
   network.on('click',p=>{
     if(p.nodes.length){highlight(ctx,p.nodes[0]);showInfo(ctx,p.nodes[0]);}
     else{reset(ctx);hideInfo();}
@@ -191,13 +207,17 @@ function highlight(ctx,id){
   const conn=new Set(ctx.network.getConnectedNodes(id));conn.add(id);
   ctx.nodes.update(ctx.raw.nodes.map(n=>{
     const on=conn.has(n.id);
+    const bg=ctx.ov?ovNodeColor(n):baseNodeColor(n,ctx.maxDeg);
     return {id:n.id,
-      color:{background:on?baseNodeColor(n,ctx.maxDeg):DIM_NODE,
+      color:{background:on?bg:DIM_NODE,
              border:on?(n.id===id?'#1f2933':'#ffffff'):'rgba(0,0,0,0)'},
-      font:{color:on?'#1f2933':DIM_FONT,size:15,strokeWidth:3,strokeColor:'#fff'}};
+      font:{color:on?((ctx.ov&&!n.isNew)?'#5a6672':'#1f2933'):DIM_FONT,size:15,strokeWidth:3,strokeColor:'#fff'}};
   }));
   ctx.edges.update(ctx.raw.edges.map((e,i)=>{
     const on=(e.from===id||e.to===id);
+    if(ctx.ov) return {id:i,color:{color:on?ovEdgeColor(e):DIM_EDGE},
+                       width:on?Math.max(ovEdgeWidth(e),2.2):0.5,
+                       arrows:{to:{enabled:true,scaleFactor:on?0.6:0.3}}};
     return {id:i,color:{color:on?'#e4572e':DIM_EDGE},width:on?2.6:0.6,
             arrows:{to:{enabled:true,scaleFactor:on?0.6:0.35}}};
   }));
@@ -205,10 +225,10 @@ function highlight(ctx,id){
 function reset(ctx){
   ctx.selected=null;
   ctx.nodes.update(ctx.raw.nodes.map(n=>({id:n.id,
-    color:{background:baseNodeColor(n,ctx.maxDeg),border:'#ffffff'},
-    font:{color:'#1f2933',size:15,strokeWidth:3,strokeColor:'#fff'}})));
+    color:{background:ctx.ov?ovNodeColor(n):baseNodeColor(n,ctx.maxDeg),border:'#ffffff'},
+    font:{color:(ctx.ov&&!n.isNew)?'#9aa4ae':'#1f2933',size:15,strokeWidth:3,strokeColor:'#fff'}})));
   ctx.edges.update(ctx.raw.edges.map((e,i)=>({id:i,
-    color:{color:'rgba(120,132,144,0.45)'},width:1.1,
+    color:{color:ctx.ov?ovEdgeColor(e):'rgba(120,132,144,0.45)'},width:ctx.ov?ovEdgeWidth(e):1.1,
     arrows:{to:{enabled:true,scaleFactor:0.5}}})));
 }
 function recolorAll(){Object.values(NETS).forEach(c=>c.selected?highlight(c,c.selected):reset(c));}
@@ -235,9 +255,9 @@ function applyLang(){
   document.documentElement.lang = lang;
   const t=T();
   setTxt('ttl',t.ttl); setTxt('desc',t.desc);
-  setTxt('tab1',t.tab1); setTxt('tab2',t.tab2);
+  setTxt('tab1',t.tab1); setTxt('tab2',t.tab2); setTxt('tab3',t.tab3);
   setTxt('lblColor',t.lblColor); setTxt('optLayer',t.optLayer); setTxt('optDegree',t.optDegree);
-  setTxt('cap2a',t.cap2a); setTxt('cap2b',t.cap2b);
+  setTxt('cap2a',t.cap2a); setTxt('cap2b',t.cap2b); setTxt('cap3',t.cap3);
   setTxt('legT',t.layer.Trigger); setTxt('legN',t.layer.Natural);
   setTxt('legE',t.layer.Engineering); setTxt('legC',t.layer.Consequence);
   setTxt('legSize',t.legSize); setTxt('foot',t.foot); setTxt('langBtn',t.langBtn);
@@ -268,6 +288,7 @@ document.getElementById('langBtn').onclick=()=>{lang=(lang==='zh')?'en':'zh';app
 buildNet('net1','fig1');
 buildNet('net2a','marine15');
 buildNet('net2b','mainland15');
+buildNet('net3','overlay');
 applyLang();
 </script>
 </body>

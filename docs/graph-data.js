@@ -1593,6 +1593,1193 @@ const GRAPHS = {
         "to": "Disease"
       }
     ]
+  },
+  "overlay": {
+    "nodes": [
+      {
+        "id": "AS",
+        "label": "AS",
+        "full": "Aftershock",
+        "layer": "Trigger",
+        "in": 2,
+        "out": 3,
+        "isNew": false
+      },
+      {
+        "id": "BI",
+        "label": "BI",
+        "full": "Business Interruption",
+        "layer": "Consequence",
+        "in": 12,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "CF",
+        "label": "CF",
+        "full": "Critical Infrastructure Failure",
+        "layer": "Engineering",
+        "in": 14,
+        "out": 14,
+        "isNew": true
+      },
+      {
+        "id": "CFL",
+        "label": "CFL",
+        "full": "Coastal Flooding",
+        "layer": "Natural",
+        "in": 5,
+        "out": 10,
+        "isNew": true
+      },
+      {
+        "id": "CLS",
+        "label": "CLS",
+        "full": "Coastal Landslide",
+        "layer": "Natural",
+        "in": 3,
+        "out": 6,
+        "isNew": true
+      },
+      {
+        "id": "CP",
+        "label": "CP",
+        "full": "Culture Perils",
+        "layer": "Consequence",
+        "in": 3,
+        "out": 0,
+        "isNew": true
+      },
+      {
+        "id": "DI",
+        "label": "DI",
+        "full": "Disease",
+        "layer": "Natural",
+        "in": 5,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "EC",
+        "label": "EC",
+        "full": "Economic Crisis",
+        "layer": "Consequence",
+        "in": 3,
+        "out": 0,
+        "isNew": true
+      },
+      {
+        "id": "EQ",
+        "label": "EQ",
+        "full": "Coastal Earthquake",
+        "layer": "Trigger",
+        "in": 0,
+        "out": 16,
+        "isNew": true
+      },
+      {
+        "id": "EX",
+        "label": "EX",
+        "full": "Explosion",
+        "layer": "Engineering",
+        "in": 2,
+        "out": 1,
+        "isNew": false
+      },
+      {
+        "id": "FA",
+        "label": "FA",
+        "full": "Flora and Fauna",
+        "layer": "Natural",
+        "in": 3,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "FF",
+        "label": "FF",
+        "full": "Fluvial Flood",
+        "layer": "Natural",
+        "in": 5,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "FI",
+        "label": "FI",
+        "full": "Fire",
+        "layer": "Engineering",
+        "in": 7,
+        "out": 7,
+        "isNew": false
+      },
+      {
+        "id": "GU",
+        "label": "GU",
+        "full": "Ground Uplift",
+        "layer": "Natural",
+        "in": 4,
+        "out": 5,
+        "isNew": true
+      },
+      {
+        "id": "HD",
+        "label": "HD",
+        "full": "Healthcare Degradation",
+        "layer": "Consequence",
+        "in": 2,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "IR",
+        "label": "IR",
+        "full": "Insufficient Rescue",
+        "layer": "Consequence",
+        "in": 6,
+        "out": 2,
+        "isNew": true
+      },
+      {
+        "id": "LB",
+        "label": "LB",
+        "full": "Lake Burst",
+        "layer": "Natural",
+        "in": 2,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "LI",
+        "label": "LI",
+        "full": "Liquefaction",
+        "layer": "Natural",
+        "in": 2,
+        "out": 8,
+        "isNew": true
+      },
+      {
+        "id": "LS",
+        "label": "LS",
+        "full": "Landslide",
+        "layer": "Natural",
+        "in": 3,
+        "out": 5,
+        "isNew": true
+      },
+      {
+        "id": "MB",
+        "label": "MB",
+        "full": "Methane Blowout",
+        "layer": "Natural",
+        "in": 2,
+        "out": 4,
+        "isNew": false
+      },
+      {
+        "id": "MED",
+        "label": "MED",
+        "full": "Marine Ecosystem Damage",
+        "layer": "Natural",
+        "in": 6,
+        "out": 0,
+        "isNew": true
+      },
+      {
+        "id": "MTD",
+        "label": "MTD",
+        "full": "Maritime Transport Disruption",
+        "layer": "Consequence",
+        "in": 2,
+        "out": 2,
+        "isNew": true
+      },
+      {
+        "id": "NF",
+        "label": "NF",
+        "full": "Critical Network Failure",
+        "layer": "Engineering",
+        "in": 12,
+        "out": 5,
+        "isNew": true
+      },
+      {
+        "id": "NFA",
+        "label": "NFA",
+        "full": "Nuclear Facility Accident",
+        "layer": "Engineering",
+        "in": 2,
+        "out": 3,
+        "isNew": false
+      },
+      {
+        "id": "PHF",
+        "label": "PHF",
+        "full": "Port / Harbour Failure",
+        "layer": "Engineering",
+        "in": 9,
+        "out": 3,
+        "isNew": true
+      },
+      {
+        "id": "PP",
+        "label": "PP",
+        "full": "Physical & Psychological Trauma",
+        "layer": "Consequence",
+        "in": 10,
+        "out": 4,
+        "isNew": true
+      },
+      {
+        "id": "RO",
+        "label": "RO",
+        "full": "Rockfall",
+        "layer": "Natural",
+        "in": 2,
+        "out": 2,
+        "isNew": false
+      },
+      {
+        "id": "SA",
+        "label": "SA",
+        "full": "Snow Avalanche",
+        "layer": "Natural",
+        "in": 1,
+        "out": 0,
+        "isNew": false
+      },
+      {
+        "id": "SCF",
+        "label": "SCF",
+        "full": "Subsea Cable Failure",
+        "layer": "Engineering",
+        "in": 3,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "SDF",
+        "label": "SDF",
+        "full": "Seawall / Dike Failure",
+        "layer": "Engineering",
+        "in": 2,
+        "out": 1,
+        "isNew": false
+      },
+      {
+        "id": "SEQ",
+        "label": "SEQ",
+        "full": "Submarine Earthquake",
+        "layer": "Trigger",
+        "in": 0,
+        "out": 29,
+        "isNew": true
+      },
+      {
+        "id": "SLS",
+        "label": "SLS",
+        "full": "Submarine Landslide",
+        "layer": "Natural",
+        "in": 5,
+        "out": 6,
+        "isNew": true
+      },
+      {
+        "id": "SPF",
+        "label": "SPF",
+        "full": "Subsea Pipeline Failure",
+        "layer": "Engineering",
+        "in": 1,
+        "out": 1,
+        "isNew": false
+      },
+      {
+        "id": "SU",
+        "label": "SU",
+        "full": "Social Unrest",
+        "layer": "Consequence",
+        "in": 2,
+        "out": 1,
+        "isNew": false
+      },
+      {
+        "id": "SUB",
+        "label": "SUB",
+        "full": "Subsidence",
+        "layer": "Natural",
+        "in": 2,
+        "out": 3,
+        "isNew": true
+      },
+      {
+        "id": "TS",
+        "label": "TS",
+        "full": "Tsunami",
+        "layer": "Natural",
+        "in": 9,
+        "out": 13,
+        "isNew": true
+      },
+      {
+        "id": "VE",
+        "label": "VE",
+        "full": "Volcanic Eruption",
+        "layer": "Trigger",
+        "in": 2,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "WD",
+        "label": "WD",
+        "full": "Water Dilemma",
+        "layer": "Natural",
+        "in": 5,
+        "out": 1,
+        "isNew": true
+      },
+      {
+        "id": "WP",
+        "label": "WP",
+        "full": "Water Pollution",
+        "layer": "Natural",
+        "in": 6,
+        "out": 3,
+        "isNew": true
+      }
+    ],
+    "edges": [
+      {
+        "from": "AS",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "AS",
+        "to": "GU",
+        "cat": "old"
+      },
+      {
+        "from": "AS",
+        "to": "TS",
+        "cat": "old"
+      },
+      {
+        "from": "BI",
+        "to": "EC",
+        "cat": "new"
+      },
+      {
+        "from": "CF",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "CP",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "EC",
+        "cat": "novel"
+      },
+      {
+        "from": "CF",
+        "to": "EX",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "FF",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "HD",
+        "cat": "new"
+      },
+      {
+        "from": "CF",
+        "to": "IR",
+        "cat": "new"
+      },
+      {
+        "from": "CF",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "NFA",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "PP",
+        "cat": "new"
+      },
+      {
+        "from": "CF",
+        "to": "SU",
+        "cat": "old"
+      },
+      {
+        "from": "CF",
+        "to": "WP",
+        "cat": "old"
+      },
+      {
+        "from": "CFL",
+        "to": "BI",
+        "cat": "new"
+      },
+      {
+        "from": "CFL",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "CFL",
+        "to": "DI",
+        "cat": "novel"
+      },
+      {
+        "from": "CFL",
+        "to": "FA",
+        "cat": "new"
+      },
+      {
+        "from": "CFL",
+        "to": "MED",
+        "cat": "new"
+      },
+      {
+        "from": "CFL",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "CFL",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "CFL",
+        "to": "PP",
+        "cat": "new"
+      },
+      {
+        "from": "CFL",
+        "to": "WD",
+        "cat": "old"
+      },
+      {
+        "from": "CFL",
+        "to": "WP",
+        "cat": "novel"
+      },
+      {
+        "from": "CLS",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "CLS",
+        "to": "FF",
+        "cat": "old"
+      },
+      {
+        "from": "CLS",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "CLS",
+        "to": "PP",
+        "cat": "old"
+      },
+      {
+        "from": "CLS",
+        "to": "SUB",
+        "cat": "novel"
+      },
+      {
+        "from": "CLS",
+        "to": "TS",
+        "cat": "new"
+      },
+      {
+        "from": "DI",
+        "to": "PP",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "AS",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "BI",
+        "cat": "novel"
+      },
+      {
+        "from": "EQ",
+        "to": "CF",
+        "cat": "new"
+      },
+      {
+        "from": "EQ",
+        "to": "CLS",
+        "cat": "new"
+      },
+      {
+        "from": "EQ",
+        "to": "GU",
+        "cat": "novel"
+      },
+      {
+        "from": "EQ",
+        "to": "LI",
+        "cat": "new"
+      },
+      {
+        "from": "EQ",
+        "to": "LS",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "MB",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "NF",
+        "cat": "new"
+      },
+      {
+        "from": "EQ",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "PP",
+        "cat": "novel"
+      },
+      {
+        "from": "EQ",
+        "to": "RO",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "SLS",
+        "cat": "new"
+      },
+      {
+        "from": "EQ",
+        "to": "SU",
+        "cat": "old"
+      },
+      {
+        "from": "EQ",
+        "to": "TS",
+        "cat": "new"
+      },
+      {
+        "from": "EQ",
+        "to": "VE",
+        "cat": "old"
+      },
+      {
+        "from": "EX",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "FA",
+        "to": "SLS",
+        "cat": "old"
+      },
+      {
+        "from": "FF",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "CP",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "EX",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "IR",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "FI",
+        "to": "PP",
+        "cat": "old"
+      },
+      {
+        "from": "GU",
+        "to": "CFL",
+        "cat": "old"
+      },
+      {
+        "from": "GU",
+        "to": "FA",
+        "cat": "old"
+      },
+      {
+        "from": "GU",
+        "to": "MED",
+        "cat": "new"
+      },
+      {
+        "from": "GU",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "GU",
+        "to": "TS",
+        "cat": "new"
+      },
+      {
+        "from": "HD",
+        "to": "DI",
+        "cat": "old"
+      },
+      {
+        "from": "IR",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "IR",
+        "to": "PP",
+        "cat": "old"
+      },
+      {
+        "from": "LB",
+        "to": "FF",
+        "cat": "new"
+      },
+      {
+        "from": "LI",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "LI",
+        "to": "CFL",
+        "cat": "old"
+      },
+      {
+        "from": "LI",
+        "to": "CLS",
+        "cat": "novel"
+      },
+      {
+        "from": "LI",
+        "to": "LS",
+        "cat": "novel"
+      },
+      {
+        "from": "LI",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "LI",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "LI",
+        "to": "SLS",
+        "cat": "old"
+      },
+      {
+        "from": "LI",
+        "to": "TS",
+        "cat": "old"
+      },
+      {
+        "from": "LS",
+        "to": "CF",
+        "cat": "new"
+      },
+      {
+        "from": "LS",
+        "to": "FF",
+        "cat": "old"
+      },
+      {
+        "from": "LS",
+        "to": "LB",
+        "cat": "new"
+      },
+      {
+        "from": "LS",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "LS",
+        "to": "PP",
+        "cat": "old"
+      },
+      {
+        "from": "MB",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "MB",
+        "to": "GU",
+        "cat": "old"
+      },
+      {
+        "from": "MB",
+        "to": "MED",
+        "cat": "old"
+      },
+      {
+        "from": "MB",
+        "to": "WP",
+        "cat": "old"
+      },
+      {
+        "from": "MTD",
+        "to": "BI",
+        "cat": "new"
+      },
+      {
+        "from": "MTD",
+        "to": "EC",
+        "cat": "old"
+      },
+      {
+        "from": "NF",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "NF",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "NF",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "NF",
+        "to": "IR",
+        "cat": "new"
+      },
+      {
+        "from": "NF",
+        "to": "WD",
+        "cat": "old"
+      },
+      {
+        "from": "NFA",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "NFA",
+        "to": "MED",
+        "cat": "old"
+      },
+      {
+        "from": "NFA",
+        "to": "WP",
+        "cat": "old"
+      },
+      {
+        "from": "PHF",
+        "to": "BI",
+        "cat": "new"
+      },
+      {
+        "from": "PHF",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "PHF",
+        "to": "MTD",
+        "cat": "new"
+      },
+      {
+        "from": "PP",
+        "to": "DI",
+        "cat": "novel"
+      },
+      {
+        "from": "PP",
+        "to": "IR",
+        "cat": "novel"
+      },
+      {
+        "from": "PP",
+        "to": "PP",
+        "cat": "old"
+      },
+      {
+        "from": "PP",
+        "to": "WD",
+        "cat": "novel"
+      },
+      {
+        "from": "RO",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "RO",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "SCF",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "SDF",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "AS",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "CF",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "CFL",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "CLS",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "DI",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "FA",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "FF",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "GU",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "HD",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "LB",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "LI",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "LS",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "MB",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "MED",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "NFA",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "RO",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "SA",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "SCF",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "SDF",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "SLS",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "SUB",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "TS",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "VE",
+        "cat": "new"
+      },
+      {
+        "from": "SEQ",
+        "to": "WD",
+        "cat": "old"
+      },
+      {
+        "from": "SEQ",
+        "to": "WP",
+        "cat": "old"
+      },
+      {
+        "from": "SLS",
+        "to": "CF",
+        "cat": "old"
+      },
+      {
+        "from": "SLS",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "SLS",
+        "to": "PHF",
+        "cat": "old"
+      },
+      {
+        "from": "SLS",
+        "to": "SCF",
+        "cat": "novel"
+      },
+      {
+        "from": "SLS",
+        "to": "SPF",
+        "cat": "old"
+      },
+      {
+        "from": "SLS",
+        "to": "TS",
+        "cat": "new"
+      },
+      {
+        "from": "SPF",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "SU",
+        "to": "IR",
+        "cat": "old"
+      },
+      {
+        "from": "SUB",
+        "to": "CFL",
+        "cat": "new"
+      },
+      {
+        "from": "SUB",
+        "to": "TS",
+        "cat": "old"
+      },
+      {
+        "from": "SUB",
+        "to": "WP",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "BI",
+        "cat": "new"
+      },
+      {
+        "from": "TS",
+        "to": "CF",
+        "cat": "new"
+      },
+      {
+        "from": "TS",
+        "to": "CFL",
+        "cat": "new"
+      },
+      {
+        "from": "TS",
+        "to": "CP",
+        "cat": "novel"
+      },
+      {
+        "from": "TS",
+        "to": "FI",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "IR",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "MTD",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "NF",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "PHF",
+        "cat": "new"
+      },
+      {
+        "from": "TS",
+        "to": "PP",
+        "cat": "new"
+      },
+      {
+        "from": "TS",
+        "to": "SCF",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "SDF",
+        "cat": "old"
+      },
+      {
+        "from": "TS",
+        "to": "SLS",
+        "cat": "old"
+      },
+      {
+        "from": "VE",
+        "to": "TS",
+        "cat": "old"
+      },
+      {
+        "from": "WD",
+        "to": "DI",
+        "cat": "new"
+      },
+      {
+        "from": "WP",
+        "to": "BI",
+        "cat": "old"
+      },
+      {
+        "from": "WP",
+        "to": "MED",
+        "cat": "old"
+      },
+      {
+        "from": "WP",
+        "to": "WD",
+        "cat": "new"
+      }
+    ]
   }
 };
 
