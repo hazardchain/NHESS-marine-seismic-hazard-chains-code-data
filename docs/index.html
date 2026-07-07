@@ -141,10 +141,19 @@ const ZH_NAME={
   "Healthcare Deg.":"医疗系统退化","Econ. Crisis":"经济危机","Phy.-Psych. Trauma":"人身与心理创伤",
   "Culture Perils":"文化受损","Social Unrest":"社会动荡"
 };
+/* English full names for the 15 aggregated classes so the two languages stay symmetric
+   (the 39 fine nodes already carry proper English names in graph-data.js) */
+const EN_NAME={
+  "EQ or AS":"Earthquake or Aftershock","Mass Slide":"Mass Slide","Flood":"Flood",
+  "Water Dil.":"Water Dilemma","Flora an Fauna":"Flora and Fauna","Disease":"Disease",
+  "Critical Infra. Fail.":"Critical Infrastructure Failure","Critical NET Fail.":"Critical Network Failure",
+  "Fire":"Fire","Business Interr.":"Business Interruption","Healthcare Deg.":"Healthcare Degradation",
+  "Econ. Crisis":"Economic Crisis","Phy.-Psych. Trauma":"Physical & Psychological Trauma",
+  "Culture Perils":"Culture Perils","Social Unrest":"Social Unrest"};
 
 let lang = 'en';   // default to English; the 中/EN button toggles to Chinese
 const T=()=>I18N[lang];
-const fullName=n => lang==='zh' ? (ZH_NAME[n.id]||n.full) : n.full;
+const fullName=n => lang==='zh' ? (ZH_NAME[n.id]||n.full) : (EN_NAME[n.id]||n.full);
 const layerName=l => T().layer[l]||l;
 const nodeTitle=n => `${fullName(n)}\n${layerName(n.layer)} · in ${n.in} / out ${n.out}`;
 
