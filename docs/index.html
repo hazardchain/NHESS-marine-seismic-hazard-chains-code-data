@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -142,7 +142,7 @@ const ZH_NAME={
   "Culture Perils":"文化受损","Social Unrest":"社会动荡"
 };
 
-let lang = (navigator.language||'').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+let lang = 'en';   // default to English; the 中/EN button toggles to Chinese
 const T=()=>I18N[lang];
 const fullName=n => lang==='zh' ? (ZH_NAME[n.id]||n.full) : n.full;
 const layerName=l => T().layer[l]||l;
