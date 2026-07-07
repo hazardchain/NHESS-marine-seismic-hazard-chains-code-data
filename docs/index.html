@@ -33,7 +33,7 @@
   .view.on{display:block}
   .net{width:100%;height:70vh;min-height:460px;background:#fff;border:1px solid var(--line);
        border-radius:12px}
-  #net3{height:86vh;min-height:640px}
+  #net1,#net3{height:86vh;min-height:640px}
   .pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .pair .cap{font-size:13px;font-weight:600;margin:0 0 6px;color:var(--ink)}
   .pair .net{height:64vh;min-height:420px}
@@ -170,6 +170,7 @@ function baseNodeColor(n,maxDeg){
 function buildNet(containerId,key){
   const raw=GRAPHS[key];
   const ov=(key==='overlay');
+  const spread=raw.nodes.length>=25;   // fig1 (39) and overlay (39): roomy layout; the 15-class graphs stay compact
   const maxDeg=Math.max(...raw.nodes.map(n=>n.in+n.out),1);
   const nodeBg=n=>ov?ovNodeColor(n):baseNodeColor(n,maxDeg);
   const nodes=new vis.DataSet(raw.nodes.map(n=>({
@@ -181,26 +182,26 @@ function buildNet(containerId,key){
   const edges=new vis.DataSet(raw.edges.map((e,i)=>({
     id:i,from:e.from,to:e.to,
     color:{color:ov?ovEdgeColor(e):'rgba(120,132,144,0.45)',highlight:ov?ovEdgeColor(e):'#e4572e'},
-    width:ov?ovEdgeWidth(e):1.1,
-    arrows:{to:{enabled:true,scaleFactor:ov?0.3:0.5}},
-    smooth:{type:'continuous',roundness:ov?0.28:0.2}
+    width:ov?ovEdgeWidth(e):(spread?0.8:1.1),
+    arrows:{to:{enabled:true,scaleFactor:spread?0.3:0.5}},
+    smooth:{type:'continuous',roundness:spread?0.28:0.2}
   })));
   const network=new vis.Network(document.getElementById(containerId),{nodes,edges},{
     physics:{enabled:true,
-             barnesHut: ov
+             barnesHut: spread
                ? {gravitationalConstant:-12000,springLength:240,springConstant:0.018,
                   centralGravity:0.08,damping:0.62,avoidOverlap:0.9}
                : {gravitationalConstant:-3000,springLength:130,springConstant:0.05,
                   centralGravity:0.30,damping:0.55,avoidOverlap:0.35},
-             stabilization:{enabled:true,iterations:ov?700:300,updateInterval:30,fit:true},
+             stabilization:{enabled:true,iterations:spread?700:300,updateInterval:30,fit:true},
              maxVelocity:30,minVelocity:2,timestep:0.4},
-    nodes:{shape:'dot',scaling:{min:ov?7:10,max:ov?22:40,label:{enabled:true,min:12,max:ov?15:20}},borderWidth:2},
+    nodes:{shape:'dot',scaling:{min:spread?7:10,max:spread?22:40,label:{enabled:true,min:12,max:spread?15:20}},borderWidth:2},
     edges:{width:1.1,selectionWidth:2.5},
     interaction:{hover:true,tooltipDelay:120,dragNodes:true,navigationButtons:false}
   });
   const freeze=()=>network.setOptions({physics:false});
   network.once('stabilizationIterationsDone',()=>{freeze();network.fit();});
-  setTimeout(freeze,ov?11000:4500);
+  setTimeout(freeze,spread?11000:4500);
   const ctx={network,nodes,edges,raw,maxDeg,selected:null,selEdge:null,ov};
   network.on('click',p=>{
     if(p.nodes.length){highlight(ctx,p.nodes[0]);showInfo(ctx,p.nodes[0]);}
