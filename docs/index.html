@@ -196,6 +196,7 @@ function buildNet(containerId,key){
     smooth:{type:'continuous',roundness:spread?0.28:0.2}
   })));
   const network=new vis.Network(document.getElementById(containerId),{nodes,edges},{
+    layout:{randomSeed:42},   // fixed seed -> identical layout on every refresh
     physics:{enabled:true,
              barnesHut: spread
                ? {gravitationalConstant:-12000,springLength:240,springConstant:0.018,
