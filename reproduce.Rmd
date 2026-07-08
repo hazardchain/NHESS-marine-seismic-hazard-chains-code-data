@@ -290,17 +290,17 @@ plot_deg <- function(g, layout, metric, zero_white = FALSE) {
        edge.color = adjustcolor("grey60", .45))
 }
 ## helper: write a 300-dpi TIFF (LZW) and optionally a PNG of a plot, then draw it inline
-export_fig <- function(plotfun, base, w, h, png = FALSE) {
+export_fig <- function(plotfun, base, w, h) {
   dir.create("figures", showWarnings = FALSE)
+  ## 300-dpi PNG
+  png(file.path("figures", paste0(base, "_300dpi.png")),
+      width = w, height = h, units = "in", res = 300)
+  plotfun(); invisible(dev.off())
+  ## 300-dpi TIFF (LZW)
   tiff(file.path("figures", paste0(base, "_300dpi.tif")),
        width = w, height = h, units = "in", res = 300, compression = "lzw")
   plotfun(); invisible(dev.off())
-  if (png) {
-    png(file.path("figures", paste0(base, "_300dpi.png")),
-        width = w, height = h, units = "in", res = 300)
-    plotfun(); invisible(dev.off())
-  }
-  plotfun()
+  plotfun()   # inline for the knitted HTML
 }
 set.seed(123); lay1 <- layout_with_fr(g_marine, niter = 3000)
 draw_fig1 <- function() {
@@ -501,7 +501,7 @@ draw_overlay <- function() {
          col = c("#8b0000", "black", "grey40"), lwd = c(2.4, 1.3, .8), bty = "n", cex = 1.0)
 }
 ## save standalone 300-dpi TIFF + PNG (publication quality), then render inline below
-export_fig(draw_overlay, "fig_overlay_events", 11, 9.5, png = TRUE)
+export_fig(draw_overlay, "fig_overlay_events", 11, 9.5)
 ```
 
 ## Do the conclusions survive the new data?
