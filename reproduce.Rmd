@@ -1,6 +1,6 @@
 ---
 title: "Reproducing the marine seismic hazard-chain results"
-subtitle: "Quantitative Modelling of Marine Seismic Hazard Chains (NHESS) — one document that regenerates every table and figure"
+subtitle: "Quantitative Modelling of Marine Seismic Hazard Chains — one document that regenerates every table and figure"
 author: "Shi, Hu, Zhang"
 date: "`r format(Sys.Date())`"
 output:
@@ -29,9 +29,12 @@ from the raw cascade tables in `data/`. Knit it (RStudio → *Knit*, or
 | **Table 2** — node in/out degree | \@ref(table-2-node-degrees) |
 | **Table 3** — four-layer net flow | \@ref(table-3-four-layer-net-flow) |
 | **Table 4** — 15-class marine vs mainland | \@ref(table-4-15-class-comparison) |
+| **Table 5 / Sect. 3.5** — directed-edge coverage of the three independent events | \@ref(independent-event-validation) |
+| **Table 6 / Sect. 3.5** — conclusions before and after merging the independent events | \@ref(independent-event-validation) |
 | **Figure 1** — marine network, in/out degree | \@ref(figure-1) |
 | **Figure 2** — marine vs mainland, 15 classes | \@ref(figure-2) |
 | **Figure 3 / Sect. 3.4** — robustness & sampling sufficiency | \@ref(figure-3-robustness) |
+| **Figure 4 / Sect. 3.5** — three independent events overlaid on the marine network | \@ref(independent-event-validation) |
 
 **Paths are relative** (this file sits at the repository root) and use
 `file.path()`, which is correct on Windows, Linux and macOS alike — no per-OS
