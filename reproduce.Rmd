@@ -501,7 +501,7 @@ draw_overlay <- function() {
          col = c("#8b0000", "black", "grey40"), lwd = c(2.4, 1.3, .8), bty = "n", cex = 1.0)
 }
 ## save standalone 300-dpi TIFF + PNG (publication quality), then render inline below
-export_fig(draw_overlay, "fig_overlay_events", 11, 9.5)
+export_fig(draw_overlay, "fig04_overlay_events", 11, 9.5)
 ```
 
 ## Do the conclusions survive the new data?
