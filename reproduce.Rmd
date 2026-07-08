@@ -248,12 +248,16 @@ dropR <- function(nodes) reach(delete_vertices(gr, intersect(nodes, V(gr)$name))
 R0 <- reach(gr)
 cat(sprintf("baseline cascade reach R0 = %d  (%d nodes, %d edges)\n", R0, vcount(gr), ecount(gr)))
 
-## single-node removals (Discussion: CF 34 %, TS 14 %, NF 13 %)
-single <- data.frame(node = c("CF", "TS", "NF"))
+## single-node removals. CF 34 %, TS 14 %, NF 13 % are the Discussion figures; fire (FI)
+## is added to show it cuts more reach than NF despite fewer neighbours (degree != cut power)
+distinct_nb <- function(n) length(union(as_ids(neighbors(gr, n, mode = "in")),
+                                        as_ids(neighbors(gr, n, mode = "out"))))
+single <- data.frame(node = c("CF", "TS", "NF", "FI"))
+single$neighbours  <- vapply(single$node, distinct_nb, integer(1))
 single$reach_after <- vapply(single$node, dropR, integer(1))
 single$reduction   <- sprintf("%.1f%%", 100 * (R0 - single$reach_after) / R0)
 knitr::kable(single, row.names = FALSE,
-             caption = "Single-node removal: cascade reach after removal and its reduction from R0.")
+             caption = "Single-node removal: distinct neighbours, cascade reach after removal, and reduction from R0. Fire (FI, 14.7 %) cuts more reach than critical network failure (NF, 12.8 %) despite fewer neighbours, since the ranking reflects directed reachability, not node degree.")
 
 ## greedy search for the 3 most disruptive nodes, excluding the seismic sources SEQ, EQ
 pool <- setdiff(V(gr)$name, c("SEQ", "EQ")); chosen <- character(0)
@@ -266,6 +270,11 @@ for (s in 1:3) {
 }
 cat(sprintf("optimal set {%s}: reach %d -> %d, reduction %.1f%%\n",
             paste(chosen, collapse = ", "), R0, dropR(chosen), 100 * (R0 - dropR(chosen)) / R0))
+
+## why fire enters ahead of network failure at step 2 (marginal cut after CF is already gone)
+R_CF <- dropR("CF")
+cat(sprintf("step-2 marginal after removing CF: FI cuts %d further pairs vs NF %d -- fire wins despite fewer neighbours\n",
+            R_CF - dropR(c("CF", "FI")), R_CF - dropR(c("CF", "NF"))))
 ```
 
 # Figure 1 {#figure-1}
