@@ -428,10 +428,21 @@ deg_ci <- function(x) sprintf("%.1f (95%% CI [%d, %d])", mean(x),
 fr  <- seq(.05, 1, .05)
 acc <- sapply(fr, function(f) { k <- max(1, round(f*n_ev))
   mean(sapply(1:200, function(s) length(unique(unlist(ev_edges[sample(n_ev, k)]))))) })
-fold <- sample(rep(1:5, length.out = n_ev))
-core_cov <- mean(sapply(1:5, function(f) { tr <- unique(unlist(ev_edges[fold!=f]))
-  te <- intersect(names(efreq)[efreq>=2], unique(unlist(ev_edges[fold==f])))
-  if (length(te)==0) NA else 100*sum(te %in% tr)/length(te) }), na.rm = TRUE)
+## Out-of-sample edge coverage (Sect. 3.4), for ALL held-out links and for the
+## >=2-event core, averaged over many random 5-fold splits. A single split is
+## noisy (and R's sample() RNG changed at R 3.6), so we average to get a stable,
+## seed-robust value: all links ~74%, core ~98%.
+R_split  <- 200
+fold_cov <- function(fold, core) mean(sapply(1:5, function(f) {
+  tr <- unique(unlist(ev_edges[fold != f]))
+  te <- unique(unlist(ev_edges[fold == f]))
+  if (core) te <- intersect(names(efreq)[efreq >= 2], te)
+  if (length(te) == 0) NA else 100 * sum(te %in% tr) / length(te) }), na.rm = TRUE)
+cov_rep  <- sapply(1:R_split, function(r) {
+  fold <- sample(rep(1:5, length.out = n_ev))
+  c(all = fold_cov(fold, FALSE), core = fold_cov(fold, TRUE)) })
+all_cov  <- mean(cov_rep["all",  ])
+core_cov <- mean(cov_rep["core", ])
 
 draw_fig3 <- function() {
   par(mfrow = c(1, 2), mar = c(4.2, 4.2, 2.4, 1))
@@ -444,8 +455,8 @@ draw_fig3 <- function() {
   abline(h = 95, lty = 2, col = "grey40")
 }
 export_fig(draw_fig3, "fig03", 10, 4.2)
-cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sample: %.1f%%\n",
-            n_ev, paste(round(stab), collapse="/"), core_cov))
+cat(sprintf("events=%d | C1..C4 hold in %s%% | out-of-sample coverage: all links %.0f%%, >=2 core %.0f%%\n",
+            n_ev, paste(round(stab), collapse="/"), all_cov, core_cov))
 cat(sprintf("hub-degree bootstrap (Sect. 3.4): SEQ out-degree %s ; CF in-degree %s\n",
             deg_ci(deg_boot["SEQ_out", ]), deg_ci(deg_boot["CF_in", ])))
 cat("First check (Sect. 3.4) -- which conclusions survive as low-frequency links are removed:\n")
