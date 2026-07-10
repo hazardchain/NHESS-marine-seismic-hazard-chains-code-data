@@ -368,7 +368,11 @@ qualitative conclusion holds (C1 pure sources; C2 dominant hubs SEQ/CF; C3
 NF-as-convergence; C4 monotone four-layer cascade). The same `B` resamples
 also yield the 95% bootstrap intervals for the two hub degrees quoted in
 Sect. 3.4 (submarine-earthquake out-degree and critical-infrastructure-failure
-in-degree); these are printed below the figure rather than plotted.
+in-degree); these are printed below the figure rather than plotted. The first
+check of Sect. 3.4 --- raising the edge-inclusion threshold to `>=1`, `>=2` and
+`>=3` independent events, which progressively removes low-frequency links --- is
+also tabulated below the figure, showing which of C1--C4 survive at each
+threshold (only C3 fails, at the `>=3` core of 46 edges).
 
 ```{r robustness, fig.width=10, fig.height=4.2}
 set.seed(1)
@@ -396,6 +400,17 @@ concl <- function(g) { dout <- degree(g, mode="out"); din <- degree(g, mode="in"
     C3 = (gv("NF",din) > gv("NF",dout)),
     C4 = (nf["Trigger"]>nf["Natural"] && nf["Natural"]>nf["Engineering"] &&
           nf["Engineering"]>nf["Consequence"] && nf["Trigger"]>0 && nf["Consequence"]<0)) }
+
+## First check (Sect. 3.4): raise the inclusion threshold to >= 1, 2, 3
+## independent events. Raising it strips low-frequency (single-event) links;
+## C1-C4 are re-tested on each thresholded network to see which conclusions
+## survive. (efreq counts, for every directed edge, the number of source
+## events in which it appears.)
+thr_check <- do.call(rbind, lapply(1:3, function(k) {
+  keep <- names(efreq)[efreq >= k]
+  cn   <- as.logical(concl(build_e(keep)))   # drop internal names; index by position
+  data.frame(min_events = k, edges = length(keep),
+             C1 = cn[1], C2 = cn[2], C3 = cn[3], C4 = cn[4]) }))
 
 B <- 1000
 stab <- rowMeans(sapply(1:B, function(b)
@@ -433,6 +448,8 @@ cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sampl
             n_ev, paste(round(stab), collapse="/"), core_cov))
 cat(sprintf("hub-degree bootstrap (Sect. 3.4): SEQ out-degree %s ; CF in-degree %s\n",
             deg_ci(deg_boot["SEQ_out", ]), deg_ci(deg_boot["CF_in", ])))
+cat("First check (Sect. 3.4) -- which conclusions survive as low-frequency links are removed:\n")
+print(thr_check, row.names = FALSE)
 ```
 
 # Independent-event validation {#independent-event-validation}
