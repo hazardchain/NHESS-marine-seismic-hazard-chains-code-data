@@ -365,7 +365,10 @@ events (tsunamis)**, so all resampling is at the **event level** (cluster
 bootstrap). Panel (a) is the edge-accumulation (sampling-sufficiency) curve;
 panel (b) is the fraction of `B=1000` event-bootstrap resamples in which each
 qualitative conclusion holds (C1 pure sources; C2 dominant hubs SEQ/CF; C3
-NF-as-convergence; C4 monotone four-layer cascade).
+NF-as-convergence; C4 monotone four-layer cascade). The same `B` resamples
+also yield the 95% bootstrap intervals for the two hub degrees quoted in
+Sect. 3.4 (submarine-earthquake out-degree and critical-infrastructure-failure
+in-degree); these are printed below the figure rather than plotted.
 
 ```{r robustness, fig.width=10, fig.height=4.2}
 set.seed(1)
@@ -397,6 +400,16 @@ concl <- function(g) { dout <- degree(g, mode="out"); din <- degree(g, mode="in"
 B <- 1000
 stab <- rowMeans(sapply(1:B, function(b)
   concl(build_e(unique(unlist(ev_edges[sample(n_ev, n_ev, replace = TRUE)])))))) * 100
+
+## 95% bootstrap intervals for the two hub degrees quoted in Sect. 3.4
+## (event-level cluster bootstrap; reported in the text, not plotted in Fig. 3)
+deg_boot <- sapply(1:B, function(b) {
+  g  <- build_e(unique(unlist(ev_edges[sample(n_ev, n_ev, replace = TRUE)])))
+  gd <- function(v, m) { d <- degree(g, mode = m); if (v %in% V(g)$name) d[[v]] else 0L }
+  c(SEQ_out = gd("SEQ", "out"), CF_in = gd("CF", "in")) })
+deg_ci <- function(x) sprintf("%.1f (95%% CI [%d, %d])", mean(x),
+            as.integer(round(quantile(x, .025))), as.integer(round(quantile(x, .975))))
+
 fr  <- seq(.05, 1, .05)
 acc <- sapply(fr, function(f) { k <- max(1, round(f*n_ev))
   mean(sapply(1:200, function(s) length(unique(unlist(ev_edges[sample(n_ev, k)]))))) })
@@ -418,6 +431,8 @@ draw_fig3 <- function() {
 export_fig(draw_fig3, "fig03", 10, 4.2)
 cat(sprintf("events=%d | C1..C4 hold in %s%% | core edges recovered out-of-sample: %.1f%%\n",
             n_ev, paste(round(stab), collapse="/"), core_cov))
+cat(sprintf("hub-degree bootstrap (Sect. 3.4): SEQ out-degree %s ; CF in-degree %s\n",
+            deg_ci(deg_boot["SEQ_out", ]), deg_ci(deg_boot["CF_in", ])))
 ```
 
 # Independent-event validation {#independent-event-validation}
