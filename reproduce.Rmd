@@ -5,17 +5,50 @@ author: "Shi, Hu, Zhang"
 date: "`r format(Sys.Date())`"
 output:
   html_document:
+    theme: flatly
+    highlight: tango
     toc: true
     toc_depth: 2
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
     number_sections: true
-    code_folding: show
+    code_folding: hide
+    code_download: true
     df_print: kable
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
-                      fig.align = "center", dpi = 150)
+                      fig.align = "center", dpi = 150, fig.retina = 2)
+options(knitr.kable.NA = "")
 ```
+
+<style>
+.main-container { max-width: 1000px; }
+h1.title { font-weight: 700; }
+h4.author, h4.date { color: #6c7a89; font-weight: 400; }
+h1:not(.title), h2 { border-bottom: 2px solid #e8edf2; padding-bottom: .3rem; margin-top: 2.4rem; }
+table { margin: 1.2em auto; border-collapse: collapse; font-size: .92em; }
+th { background: #f4f7fa; border-bottom: 2px solid #d6dee6; padding: 7px 14px; }
+td { padding: 6px 14px; border-bottom: 1px solid #edf1f5; }
+tbody tr:hover { background: #f7fafc; }
+caption { caption-side: top; color: #5a6a7a; font-size: .92em; padding: 8px 0; text-align: left; }
+img { border: 1px solid #e4e9ef; border-radius: 8px; padding: 8px; background: #fff; max-width: 100%; }
+img[src*="badge"], img[src*="zenodo"] { border: none; padding: 0; border-radius: 0; }
+pre { border-radius: 6px; }
+details summary { cursor: pointer; color: #2c3e50; font-weight: 600; }
+.btn-default { border-radius: 4px; }
+</style>
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21316692.svg)](https://doi.org/10.5281/zenodo.21316692)
+&nbsp;[**GitHub repository**](https://github.com/hazardchain/NHESS-marine-seismic-hazard-chains-code-data)
+&nbsp;·&nbsp;[**Interactive network viewer**](https://hazardchain.github.io/NHESS-marine-seismic-hazard-chains-code-data/)
+
+> Code blocks are folded for readability — click **Code** next to any output to
+> see exactly how it is produced, or use the **Code ▾** menu (top right) to
+> unfold everything. The **Download Rmd** entry in the same menu saves this
+> document's source.
 
 # Overview
 
@@ -714,7 +747,11 @@ Tables 2–4: re-knit this document and the interactive page updates automatical
 
 # Session information
 
+<details><summary>Platform and package versions of this run (click to expand)</summary>
+
 ```{r session}
 cat("OS:", Sys.info()[["sysname"]], Sys.info()[["release"]], "\n")
 sessionInfo()
 ```
+
+</details>
