@@ -1,5 +1,7 @@
 # Code and data — Marine seismic hazard chains (NHESS)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21316692.svg)](https://doi.org/10.5281/zenodo.21316692)
+
 Reproducibility materials for *Quantitative Modelling of Marine Seismic Hazard
 Chains: Topology, Core Amplification Nodes, and Implications* (Shi, Hu, Zhang;
 submitted to *Natural Hazards and Earth System Sciences*).
@@ -58,5 +60,5 @@ remain recoverable in the git history.)*
   citing the paper.
 
 Citation metadata is in [`CITATION.cff`](CITATION.cff). A versioned snapshot of
-this repository is archived on Zenodo; the DOI is given in the manuscript's
-Code-and-data-availability statement.
+this repository (v1.0.0) is archived on Zenodo:
+[doi:10.5281/zenodo.21316692](https://doi.org/10.5281/zenodo.21316692).
