@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite the paper and this archive."
+title: "Code and data for: Quantitative Modelling of Marine Seismic Hazard Chains: Topology, Core Amplification Nodes, and Implications"
+authors:
+  - family-names: Shi
+    given-names: Yang
+    affiliation: "Southern University of Science and Technology"
+  - family-names: Hu
+    given-names: Chunyu
+    affiliation: "Southern University of Science and Technology"
+  - family-names: Zhang
+    given-names: Zhenguo
+    affiliation: "Southern University of Science and Technology"
+repository-code: "https://github.com/hazardchain/NHESS-marine-seismic-hazard-chains-code-data"
+license: MIT
+version: 1.0.0
+date-released: "2026-07-12"
+keywords:
+  - cascading hazards
+  - disaster chain
+  - tsunami
+  - Natech
+  - complex networks
+  - marine seismic hazards

@@ -1,0 +1,12 @@
+{
+  "title": "Code and data for: Quantitative Modelling of Marine Seismic Hazard Chains: Topology, Core Amplification Nodes, and Implications",
+  "description": "Reproducibility deposit for the NHESS manuscript by Shi, Hu and Zhang. A single R Markdown document (reproduce.Rmd) regenerates every table and figure of the paper from the raw documented cascade tables: the marine seismic hazard-chain network (39 nodes / 152 directed edges from 366 documented chains under 58 tsunami source events), the mainland-China comparison at a unified 15-class resolution, the robustness checks (event-level cluster bootstrap, edge-frequency thresholds, sampling sufficiency), the out-of-sample hindcast against three independent events, and the data of the interactive network viewer.",
+  "creators": [
+    {"name": "Shi, Yang", "affiliation": "Southern University of Science and Technology"},
+    {"name": "Hu, Chunyu", "affiliation": "Southern University of Science and Technology"},
+    {"name": "Zhang, Zhenguo", "affiliation": "Southern University of Science and Technology"}
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "keywords": ["cascading hazards", "disaster chain", "tsunami", "Natech", "complex networks", "marine seismic hazards"]
+}

@@ -18,6 +18,7 @@ paper directly from the raw cascade tables in [`data/`](data/). Knit it
 - **Table 2** node degrees · **Table 3** four-layer net flow (+42/+1/−16/−27) · **Table 4** 15-class marine (15/57) vs mainland (15/47)
 - **Figure 1** marine in/out-degree network · **Figure 2** marine vs mainland (15 classes)
 - **Sect. 3.4 / Figure 3** robustness — event-level cluster bootstrap + sampling sufficiency
+- **Sect. 3.5 / Figure 4, Tables 5–6** out-of-sample hindcast — three independent events (2004 Indian Ocean, 1960 Valdivia, 2018 Palu) overlaid on the network
 - **`docs/graph-data.js`** — the interactive viewer's data, written from the *same* graph objects, so the web page never drifts from the figures
 
 A pre-knitted **`reproduce.html`** is included, so the full reproduction can be
@@ -51,6 +52,11 @@ remain recoverable in the git history.)*
 
 ## License and citation
 
-*TODO(authors): add a license (e.g. CC-BY-4.0 for data, MIT for code) and, after
-archiving this repository to Zenodo, insert the dataset DOI here and in the
-manuscript's Code-and-data-availability statement.*
+- **Code** (R, R Markdown, viewer JavaScript/HTML): [MIT](LICENSE).
+- **Data** (`data/`, the documented cascade tables) and derived tables/figures:
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) — please credit by
+  citing the paper.
+
+Citation metadata is in [`CITATION.cff`](CITATION.cff). A versioned snapshot of
+this repository is archived on Zenodo; the DOI is given in the manuscript's
+Code-and-data-availability statement.
