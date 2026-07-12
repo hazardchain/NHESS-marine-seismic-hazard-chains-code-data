@@ -13,7 +13,7 @@ authors:
     affiliation: "Southern University of Science and Technology"
 repository-code: "https://github.com/hazardchain/NHESS-marine-seismic-hazard-chains-code-data"
 license: MIT
-version: 1.0.0
+version: 1.0.1
 date-released: "2026-07-12"
 keywords:
   - cascading hazards
