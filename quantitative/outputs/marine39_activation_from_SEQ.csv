@@ -1,0 +1,40 @@
+node,name,layer,p_activated_given_SEQ
+SEQ,Submarine Earthquake,Trigger,1.0000
+CF,Critical Infrastructure Failure,Engineering,0.9156
+BI,Business Interruption,Consequence,0.9097
+PP,Physical & Psychological Trauma,Consequence,0.8435
+TS,Tsunami,Natural,0.8151
+EC,Economic Crisis,Consequence,0.8148
+SLS,Submarine Landslide,Natural,0.6881
+NF,Critical Network Failure,Engineering,0.4625
+CFL,Coastal Flooding,Natural,0.4280
+AS,Aftershock,Trigger,0.3433
+LS,Landslide,Natural,0.2627
+IR,Insufficient Rescue,Consequence,0.2596
+FI,Fire,Engineering,0.2542
+PHF,Port / Harbour Failure,Engineering,0.2497
+MTD,Maritime Transport Disruption,Consequence,0.1966
+LI,Liquefaction,Natural,0.1816
+CP,Culture Perils,Consequence,0.1717
+GU,Ground Uplift,Natural,0.1674
+WP,Water Pollution,Natural,0.1327
+MED,Marine Ecosystem Damage,Natural,0.1320
+WD,Water Dilemma,Natural,0.1279
+SUB,Subsidence,Natural,0.1208
+FF,Fluvial Flood,Natural,0.0998
+HD,Healthcare Degradation,Consequence,0.0983
+DI,Disease,Natural,0.0828
+CLS,Coastal Landslide,Natural,0.0817
+SDF,Seawall / Dike Failure,Engineering,0.0668
+LB,Lake Burst,Natural,0.0605
+SCF,Subsea Cable Failure,Engineering,0.0565
+FA,Flora and Fauna,Natural,0.0553
+EX,Explosion,Engineering,0.0529
+NFA,Nuclear Facility Accident,Engineering,0.0428
+RO,Rockfall,Natural,0.0408
+MB,Methane Blowout,Natural,0.0404
+SA,Snow Avalanche,Natural,0.0210
+VE,Volcanic Eruption,Trigger,0.0197
+SU,Social Unrest,Consequence,0.0190
+SPF,Subsea Pipeline Failure,Engineering,0.0177
+EQ,Coastal Earthquake,Trigger,0.0000

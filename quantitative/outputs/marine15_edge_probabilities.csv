@@ -1,0 +1,58 @@
+from,to,n_events_from,n_events_edge,p_mle,wilson95_lo,wilson95_hi
+Critical Infra. Fail.,Business Interr.,46,43,0.935,0.825,0.978
+Mass Slide,Flood,49,44,0.898,0.782,0.956
+Business Interr.,Econ. Crisis,47,42,0.894,0.774,0.954
+EQ or AS,Mass Slide,53,44,0.830,0.708,0.908
+Critical Infra. Fail.,Phy.-Psych. Trauma,46,38,0.826,0.693,0.909
+EQ or AS,Critical Infra. Fail.,53,39,0.736,0.604,0.836
+Fire,Critical Infra. Fail.,7,4,0.571,0.250,0.842
+Social Unrest,Healthcare Deg.,2,1,0.500,0.095,0.905
+Critical NET Fail.,Business Interr.,23,11,0.478,0.292,0.670
+Flood,Critical Infra. Fail.,55,26,0.473,0.347,0.602
+EQ or AS,Flood,53,21,0.396,0.276,0.531
+Flood,Phy.-Psych. Trauma,55,20,0.364,0.249,0.496
+Mass Slide,Critical Infra. Fail.,49,17,0.347,0.229,0.487
+Flood,Critical NET Fail.,55,16,0.291,0.188,0.421
+Fire,Business Interr.,7,2,0.286,0.082,0.641
+Fire,Healthcare Deg.,7,2,0.286,0.082,0.641
+Water Dil.,Flora an Fauna,8,2,0.250,0.071,0.591
+Disease,Phy.-Psych. Trauma,4,1,0.250,0.046,0.699
+Healthcare Deg.,Fire,10,2,0.200,0.057,0.510
+Healthcare Deg.,Disease,10,2,0.200,0.057,0.510
+Healthcare Deg.,Phy.-Psych. Trauma,10,2,0.200,0.057,0.510
+Critical NET Fail.,Healthcare Deg.,23,4,0.174,0.070,0.371
+Flood,Business Interr.,55,9,0.164,0.089,0.283
+Critical Infra. Fail.,Culture Perils,46,7,0.152,0.076,0.282
+Critical Infra. Fail.,Healthcare Deg.,46,7,0.152,0.076,0.282
+Fire,Culture Perils,7,1,0.143,0.026,0.513
+Flora an Fauna,Mass Slide,7,1,0.143,0.026,0.513
+Fire,Phy.-Psych. Trauma,7,1,0.143,0.026,0.513
+EQ or AS,Critical NET Fail.,53,7,0.132,0.065,0.248
+Critical NET Fail.,Fire,23,3,0.130,0.045,0.321
+Critical NET Fail.,Critical Infra. Fail.,23,3,0.130,0.045,0.321
+Water Dil.,Disease,8,1,0.125,0.022,0.471
+Water Dil.,Business Interr.,8,1,0.125,0.022,0.471
+Mass Slide,Critical NET Fail.,49,6,0.122,0.057,0.242
+Critical NET Fail.,Water Dil.,23,2,0.087,0.024,0.268
+Critical Infra. Fail.,Fire,46,4,0.087,0.034,0.203
+Critical Infra. Fail.,Water Dil.,46,3,0.065,0.022,0.175
+Critical Infra. Fail.,Critical NET Fail.,46,3,0.065,0.022,0.175
+EQ or AS,Fire,53,3,0.057,0.019,0.154
+Flood,Water Dil.,55,3,0.055,0.019,0.149
+Mass Slide,Phy.-Psych. Trauma,49,2,0.041,0.011,0.137
+Mass Slide,Flora an Fauna,49,2,0.041,0.011,0.137
+Mass Slide,Water Dil.,49,2,0.041,0.011,0.137
+EQ or AS,Flora an Fauna,53,2,0.038,0.010,0.128
+Critical Infra. Fail.,Social Unrest,46,1,0.022,0.004,0.113
+Critical Infra. Fail.,Flora an Fauna,46,1,0.022,0.004,0.113
+Critical Infra. Fail.,Flood,46,1,0.022,0.004,0.113
+Mass Slide,Fire,49,1,0.020,0.004,0.107
+EQ or AS,Social Unrest,53,1,0.019,0.003,0.099
+EQ or AS,Business Interr.,53,1,0.019,0.003,0.099
+EQ or AS,Water Dil.,53,1,0.019,0.003,0.099
+EQ or AS,Disease,53,1,0.019,0.003,0.099
+EQ or AS,Healthcare Deg.,53,1,0.019,0.003,0.099
+Flood,Healthcare Deg.,55,1,0.018,0.003,0.096
+Flood,Fire,55,1,0.018,0.003,0.096
+Flood,Flora an Fauna,55,1,0.018,0.003,0.096
+Flood,Mass Slide,55,1,0.018,0.003,0.096

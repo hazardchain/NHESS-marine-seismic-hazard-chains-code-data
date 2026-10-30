@@ -1,0 +1,73 @@
+event,from,to,status,n_events_edge,p_mle,percentile_among_network_edges
+LTT_IndianOcean_2004,BI,EC,in network,42,0.894,0.95
+LTT_IndianOcean_2004,CF,EC,novel,,,
+LTT_IndianOcean_2004,CF,HD,in network,4,0.087,0.34
+LTT_IndianOcean_2004,CFL,DI,novel,,,
+LTT_IndianOcean_2004,CFL,FA,in network,1,0.042,0.23
+LTT_IndianOcean_2004,CFL,MED,in network,1,0.042,0.23
+LTT_IndianOcean_2004,CFL,PP,in network,13,0.542,0.87
+LTT_IndianOcean_2004,CFL,WP,novel,,,
+LTT_IndianOcean_2004,GU,MED,in network,1,0.111,0.42
+LTT_IndianOcean_2004,GU,TS,in network,5,0.556,0.87
+LTT_IndianOcean_2004,PHF,BI,in network,4,0.308,0.70
+LTT_IndianOcean_2004,PP,DI,novel,,,
+LTT_IndianOcean_2004,PP,IR,novel,,,
+LTT_IndianOcean_2004,SEQ,GU,in network,7,0.143,0.50
+LTT_IndianOcean_2004,SEQ,SLS,in network,33,0.673,0.91
+LTT_IndianOcean_2004,SEQ,SUB,in network,6,0.122,0.42
+LTT_IndianOcean_2004,SEQ,TS,in network,15,0.306,0.69
+LTT_IndianOcean_2004,SLS,SCF,novel,,,
+LTT_IndianOcean_2004,SUB,CFL,in network,2,0.333,0.77
+LTT_IndianOcean_2004,TS,BI,in network,4,0.074,0.30
+LTT_IndianOcean_2004,TS,CF,in network,10,0.185,0.56
+LTT_IndianOcean_2004,TS,CFL,in network,23,0.426,0.80
+LTT_IndianOcean_2004,TS,CP,novel,,,
+LTT_IndianOcean_2004,TS,PHF,in network,6,0.111,0.42
+LTT_IndianOcean_2004,TS,PP,in network,8,0.148,0.50
+LTT_IndianOcean_2004,WP,WD,in network,1,0.167,0.54
+LTT_Chile_1960,CF,EC,novel,,,
+LTT_Chile_1960,CF,PP,in network,38,0.826,0.95
+LTT_Chile_1960,CFL,BI,in network,3,0.125,0.44
+LTT_Chile_1960,CFL,FA,in network,1,0.042,0.23
+LTT_Chile_1960,CFL,PP,in network,13,0.542,0.87
+LTT_Chile_1960,GU,TS,in network,5,0.556,0.87
+LTT_Chile_1960,LB,FF,in network,1,0.500,0.86
+LTT_Chile_1960,LS,LB,in network,1,0.071,0.30
+LTT_Chile_1960,PHF,MTD,in network,9,0.692,0.91
+LTT_Chile_1960,SEQ,CF,in network,36,0.735,0.93
+LTT_Chile_1960,SEQ,GU,in network,7,0.143,0.50
+LTT_Chile_1960,SEQ,LS,in network,13,0.265,0.67
+LTT_Chile_1960,SEQ,SUB,in network,6,0.122,0.42
+LTT_Chile_1960,SEQ,VE,in network,1,0.020,0.10
+LTT_Chile_1960,SUB,CFL,in network,2,0.333,0.77
+LTT_Chile_1960,TS,CFL,in network,23,0.426,0.80
+LTT_Chile_1960,TS,PHF,in network,6,0.111,0.42
+LTT_Palu_2018,BI,EC,in network,42,0.894,0.95
+LTT_Palu_2018,CF,HD,in network,4,0.087,0.34
+LTT_Palu_2018,CF,IR,in network,6,0.130,0.46
+LTT_Palu_2018,CF,PP,in network,38,0.826,0.95
+LTT_Palu_2018,CFL,PP,in network,13,0.542,0.87
+LTT_Palu_2018,CLS,SUB,novel,,,
+LTT_Palu_2018,CLS,TS,in network,3,0.600,0.89
+LTT_Palu_2018,EQ,BI,novel,,,
+LTT_Palu_2018,EQ,CF,in network,3,0.750,0.94
+LTT_Palu_2018,EQ,CLS,in network,1,0.250,0.66
+LTT_Palu_2018,EQ,GU,novel,,,
+LTT_Palu_2018,EQ,LI,in network,2,0.500,0.86
+LTT_Palu_2018,EQ,NF,in network,2,0.500,0.86
+LTT_Palu_2018,EQ,PP,novel,,,
+LTT_Palu_2018,EQ,SLS,in network,1,0.250,0.66
+LTT_Palu_2018,EQ,TS,in network,1,0.250,0.66
+LTT_Palu_2018,GU,TS,in network,5,0.556,0.87
+LTT_Palu_2018,LI,CLS,novel,,,
+LTT_Palu_2018,LI,LS,novel,,,
+LTT_Palu_2018,LS,CF,in network,8,0.571,0.88
+LTT_Palu_2018,MTD,BI,in network,10,1.000,1.00
+LTT_Palu_2018,NF,IR,in network,4,0.174,0.54
+LTT_Palu_2018,PHF,MTD,in network,9,0.692,0.91
+LTT_Palu_2018,PP,WD,novel,,,
+LTT_Palu_2018,SLS,TS,in network,39,0.975,0.97
+LTT_Palu_2018,SUB,CFL,in network,2,0.333,0.77
+LTT_Palu_2018,TS,CFL,in network,23,0.426,0.80
+LTT_Palu_2018,TS,PHF,in network,6,0.111,0.42
+LTT_Palu_2018,WD,DI,in network,1,0.167,0.54
